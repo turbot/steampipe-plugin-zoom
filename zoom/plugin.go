@@ -1,0 +1,31 @@
+package zoom
+
+import (
+	"context"
+
+	"github.com/turbot/steampipe-plugin-sdk/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
+)
+
+func Plugin(ctx context.Context) *plugin.Plugin {
+	p := &plugin.Plugin{
+		Name: "steampipe-plugin-zoom",
+		ConnectionConfigSchema: &plugin.ConnectionConfigSchema{
+			NewInstance: ConfigInstance,
+			Schema:      ConfigSchema,
+		},
+		DefaultTransform: transform.FromGo().NullIfZero(),
+		TableMap: map[string]*plugin.Table{
+			"zoom_account_settings":      tableZoomAccountSettings(ctx),
+			"zoom_account_lock_settings": tableZoomAccountLockSettings(ctx),
+			"zoom_group":                 tableZoomGroup(ctx),
+			"zoom_group_member":          tableZoomGroupMember(ctx),
+			"zoom_meeting":               tableZoomMeeting(ctx),
+			"zoom_cloud_recording":       tableZoomCloudRecording(ctx),
+			"zoom_role":                  tableZoomRole(ctx),
+			"zoom_role_member":           tableZoomRoleMember(ctx),
+			"zoom_user":                  tableZoomUser(ctx),
+		},
+	}
+	return p
+}
