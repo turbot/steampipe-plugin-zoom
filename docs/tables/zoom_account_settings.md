@@ -56,7 +56,7 @@ from
 Check the setting at account level:
 ```sql
 select
-  security -> 'password_requirement' ->> 'minimum_password_length'
+  security -> 'password_requirement' ->> 'minimum_password_length' as minimum_password_length
 from
   zoom_account_settings
 ```
@@ -66,7 +66,7 @@ from
 Check the setting at account level:
 ```sql
 select
-  schedule_meeting ->> 'join_before_host'
+  schedule_meeting ->> 'join_before_host' as join_before_host
 from
   zoom_account_settings
 ```

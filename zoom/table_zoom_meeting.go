@@ -2,7 +2,6 @@ package zoom
 
 import (
 	"context"
-	//"time"
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
@@ -22,6 +21,10 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 		Get: &plugin.GetConfig{
 			Hydrate:    getMeeting,
 			KeyColumns: plugin.SingleColumn("id"),
+		},
+		HydrateConfig: []plugin.HydrateConfig{
+			// Zoom quickly throttles on the get meeting API, so be more gentle
+			{Func: getMeeting, MaxConcurrency: 5},
 		},
 		Columns: []*plugin.Column{
 			// Top columns
@@ -47,7 +50,6 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 			{Name: "tracking_fields", Type: proto.ColumnType_JSON, Hydrate: getMeeting, Description: "Tracking fields."},
 			{Name: "type", Type: proto.ColumnType_INT, Description: "Meeting Types: 1 - Instant meeting. 2 - Scheduled meeting. 3 - Recurring meeting with no fixed time. 8 - Recurring meeting with fixed time."},
 			{Name: "uuid", Type: proto.ColumnType_STRING, Description: "Unique Meeting ID. Each meeting instance will generate its own Meeting UUID."},
-			//{Name: "raw", Type: proto.ColumnType_JSON, Transform: transform.FromValue(), Description: ""},
 		},
 	}
 }
@@ -103,7 +105,12 @@ func getMeeting(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	opts := zoom.GetMeetingOptions{
 		MeetingID: id,
 	}
-	result, err := conn.GetMeeting(opts)
+
+	getMeetingWithRetry := func(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+		return conn.GetMeeting(opts)
+	}
+	result, err := plugin.RetryHydrate(ctx, d, h, getMeetingWithRetry, &plugin.RetryConfig{ShouldRetryError: shouldRetryError})
+
 	if err != nil {
 		if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
 			// Meeting not found
