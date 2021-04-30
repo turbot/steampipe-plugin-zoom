@@ -31,7 +31,7 @@ where
   user_id in (select id from zoom_user where email = 'dwight@dundermifflin.com')
 ```
 
-### List all cloud recordings for a Sep 2019
+### List all cloud recordings for Sep 2019
 
 ```sql
 select
