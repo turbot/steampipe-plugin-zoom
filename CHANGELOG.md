@@ -1,4 +1,11 @@
 
+## v0.0.2 [2021-05-06]
+
+_Enhancements_
+
+- Use Steampipe SDK v0.2.8 with retry support ([#1](https://github.com/turbot/steampipe-plugin-zoom/pull/1))
+
+
 ## v0.0.1 [2021-04-30]
 
 _What's new?_
