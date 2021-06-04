@@ -18,10 +18,11 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		TableMap: map[string]*plugin.Table{
 			"zoom_account_settings":      tableZoomAccountSettings(ctx),
 			"zoom_account_lock_settings": tableZoomAccountLockSettings(ctx),
+			"zoom_cloud_recording":       tableZoomCloudRecording(ctx),
 			"zoom_group":                 tableZoomGroup(ctx),
 			"zoom_group_member":          tableZoomGroupMember(ctx),
 			"zoom_meeting":               tableZoomMeeting(ctx),
-			"zoom_cloud_recording":       tableZoomCloudRecording(ctx),
+			"zoom_my_user":               tableZoomMyUser(ctx),
 			"zoom_role":                  tableZoomRole(ctx),
 			"zoom_role_member":           tableZoomRoleMember(ctx),
 			"zoom_user":                  tableZoomUser(ctx),

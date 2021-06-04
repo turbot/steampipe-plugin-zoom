@@ -11,7 +11,7 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 )
 
-func connect(_ context.Context, d *plugin.QueryData) (*zoom.Client, error) {
+func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
 
 	// Load connection from cache, which preserves throttling protection etc
 	cacheKey := "zoom"

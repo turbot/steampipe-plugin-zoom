@@ -21,7 +21,7 @@ func tableZoomAccountLockSettings(ctx context.Context) *plugin.Table {
 			Hydrate:    getAccountLockSettings,
 			KeyColumns: plugin.SingleColumn("id"),
 		},
-		Columns: []*plugin.Column{
+		Columns: zoomAccountColumns([]*plugin.Column{
 			// Top columns
 			{Name: "id", Type: proto.ColumnType_STRING, Hydrate: idString, Transform: transform.FromValue(), Description: "Account ID. Set to 'me' for the master account."},
 			{Name: "schedule_meeting", Type: proto.ColumnType_JSON, Description: "Schedule meeting lock settings."},
@@ -31,7 +31,7 @@ func tableZoomAccountLockSettings(ctx context.Context) *plugin.Table {
 			{Name: "telephony", Type: proto.ColumnType_JSON, Description: "Telephony lock settings."},
 			{Name: "tsp", Type: proto.ColumnType_JSON, Description: "TSP lock settings."},
 			{Name: "meeting_security", Type: proto.ColumnType_JSON, Hydrate: getAccountLockSettingsMeetingSecurity, Description: "Meeting security lock settings."},
-		},
+		}),
 	}
 }
 

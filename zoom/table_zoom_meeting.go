@@ -26,7 +26,7 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 			// Zoom quickly throttles on the get meeting API, so be more gentle
 			{Func: getMeeting, MaxConcurrency: 5},
 		},
-		Columns: []*plugin.Column{
+		Columns: zoomAccountColumns([]*plugin.Column{
 			// Top columns
 			{Name: "user_id", Type: proto.ColumnType_STRING, Transform: transform.FromField("HostID"), Description: "ID of the user who is set as the host of the meeting."},
 			{Name: "id", Type: proto.ColumnType_INT, Description: "Meeting ID, also known as the meeting number."},
@@ -50,7 +50,7 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 			{Name: "tracking_fields", Type: proto.ColumnType_JSON, Hydrate: getMeeting, Description: "Tracking fields."},
 			{Name: "type", Type: proto.ColumnType_INT, Description: "Meeting Types: 1 - Instant meeting. 2 - Scheduled meeting. 3 - Recurring meeting with no fixed time. 8 - Recurring meeting with fixed time."},
 			{Name: "uuid", Type: proto.ColumnType_STRING, Description: "Unique Meeting ID. Each meeting instance will generate its own Meeting UUID."},
-		},
+		}),
 	}
 }
 

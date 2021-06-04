@@ -7,5 +7,5 @@ replace github.com/himalayan-institute/zoom-lib-golang => github.com/e-gineer/zo
 require (
 	github.com/golang/protobuf v1.4.3
 	github.com/himalayan-institute/zoom-lib-golang v1.0.0
-	github.com/turbot/steampipe-plugin-sdk v0.2.8
+	github.com/turbot/steampipe-plugin-sdk v0.3.0-rc.0.0.20210526220805-6ca2e720464f
 )

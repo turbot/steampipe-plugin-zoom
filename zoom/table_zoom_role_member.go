@@ -18,7 +18,7 @@ func tableZoomRoleMember(ctx context.Context) *plugin.Table {
 			Hydrate:    listRoleMember,
 			KeyColumns: plugin.SingleColumn("role_id"),
 		},
-		Columns: []*plugin.Column{
+		Columns: zoomAccountColumns([]*plugin.Column{
 			// Top columns
 			{Name: "role_id", Type: proto.ColumnType_STRING, Hydrate: roleIDString, Transform: transform.FromValue(), Description: "Role ID."},
 			{Name: "user_id", Type: proto.ColumnType_STRING, Transform: transform.FromField("ID"), Description: "User ID of the member."},
@@ -27,7 +27,7 @@ func tableZoomRoleMember(ctx context.Context) *plugin.Table {
 			{Name: "last_name", Type: proto.ColumnType_STRING, Description: "Last name of the member."},
 			{Name: "type", Type: proto.ColumnType_STRING, Description: "Type of the member."},
 			{Name: "department", Type: proto.ColumnType_STRING, Description: "Department of the member."},
-		},
+		}),
 	}
 }
 

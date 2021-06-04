@@ -28,7 +28,6 @@ func tableZoomCloudRecording(ctx context.Context) *plugin.Table {
 			{Name: "topic", Type: proto.ColumnType_STRING, Description: "Recording topic."},
 			{Name: "start_time", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("StartTime").Transform(timeToTimestamp), Description: "Recording start time in GMT/UTC. Start time will not be returned if the recording is an instant recording."},
 			// Other columns
-			{Name: "account_id", Type: proto.ColumnType_STRING, Description: "Unique Identifier of the user account."},
 			{Name: "user_id", Type: proto.ColumnType_STRING, Transform: transform.FromField("HostID"), Description: "ID of the user who is set as the host of the recording."},
 			{Name: "duration", Type: proto.ColumnType_INT, Transform: transform.FromField("Duration"), Description: "Recording duration."},
 			{Name: "total_size", Type: proto.ColumnType_INT, Transform: transform.FromField("TotalSize"), Description: "Total size of the recording."},
@@ -37,7 +36,8 @@ func tableZoomCloudRecording(ctx context.Context) *plugin.Table {
 			{Name: "recording_count", Type: proto.ColumnType_INT, Transform: transform.FromField("RecordingCount"), Description: "Number of recording files returned in the response of this API call."},
 			{Name: "recording_files", Type: proto.ColumnType_JSON, Description: "List of recording file."},
 			{Name: "settings", Type: proto.ColumnType_JSON, Hydrate: getCloudRecordingSettings, Transform: transform.FromValue(), Description: "Settings for the recording."},
-			//{Name: "raw", Type: proto.ColumnType_JSON, Transform: transform.FromValue(), Description: ""},
+			// Common columns
+			{Name: "account_id", Type: proto.ColumnType_STRING, Description: "Unique Identifier of the user account."},
 		},
 	}
 }

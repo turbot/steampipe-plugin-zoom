@@ -21,7 +21,7 @@ func tableZoomRole(ctx context.Context) *plugin.Table {
 			Hydrate:    getRole,
 			KeyColumns: plugin.SingleColumn("id"),
 		},
-		Columns: []*plugin.Column{
+		Columns: zoomAccountColumns([]*plugin.Column{
 			// Top columns
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "Role ID."},
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "Role name."},
@@ -29,7 +29,7 @@ func tableZoomRole(ctx context.Context) *plugin.Table {
 			{Name: "total_members", Type: proto.ColumnType_INT, Transform: transform.FromField("TotalMembers"), Description: "Total number of members in the role."},
 			{Name: "privileges", Type: proto.ColumnType_JSON, Hydrate: getRole, Description: "Privileges assigned to the role."},
 			{Name: "sub_account_privileges", Type: proto.ColumnType_JSON, Hydrate: getRole, Description: "Privileges for management of sub-accounts."},
-		},
+		}),
 	}
 }
 

@@ -21,12 +21,12 @@ func tableZoomGroup(ctx context.Context) *plugin.Table {
 			Hydrate:    getGroup,
 			KeyColumns: plugin.SingleColumn("id"),
 		},
-		Columns: []*plugin.Column{
+		Columns: zoomAccountColumns([]*plugin.Column{
 			// Top columns
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "Group ID."},
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "Group name."},
 			{Name: "total_members", Type: proto.ColumnType_INT, Transform: transform.FromField("TotalMembers"), Description: "Total number of members in the group."},
-		},
+		}),
 	}
 }
 

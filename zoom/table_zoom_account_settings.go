@@ -21,7 +21,7 @@ func tableZoomAccountSettings(ctx context.Context) *plugin.Table {
 			Hydrate:    getAccountSettings,
 			KeyColumns: plugin.SingleColumn("id"),
 		},
-		Columns: []*plugin.Column{
+		Columns: zoomAccountColumns([]*plugin.Column{
 			// Top columns
 			{Name: "id", Type: proto.ColumnType_STRING, Hydrate: idString, Transform: transform.FromValue(), Description: "Account ID. Set to 'me' for the master account."},
 			{Name: "schedule_meeting", Type: proto.ColumnType_JSON, Description: "Schedule meeting settings."},
@@ -30,7 +30,7 @@ func tableZoomAccountSettings(ctx context.Context) *plugin.Table {
 			{Name: "security", Type: proto.ColumnType_JSON, Description: "Security settings."},
 			{Name: "recording", Type: proto.ColumnType_JSON, Description: "Recording settings."},
 			{Name: "telephony", Type: proto.ColumnType_JSON, Description: "Telephony settings."},
-			{Name: "tsp", Type: proto.ColumnType_JSON, Description: "TSP settings."},
+			{Name: "tsp", Type: proto.ColumnType_JSON, Transform: transform.FromField("TSP"), Description: "TSP settings."},
 			{Name: "integration", Type: proto.ColumnType_JSON, Description: "Integration settings."},
 			{Name: "feature", Type: proto.ColumnType_JSON, Description: "Feature settings."},
 			{Name: "meeting_authentication", Type: proto.ColumnType_JSON, Hydrate: getAccountSettingsMeetingAuthentication, Transform: transform.FromValue(), Description: "Meeting authentication options applied to the account."},
@@ -38,7 +38,7 @@ func tableZoomAccountSettings(ctx context.Context) *plugin.Table {
 			{Name: "meeting_security", Type: proto.ColumnType_JSON, Hydrate: getAccountSettingsMeetingSecurity, Description: "Meeting security settings applied to the account."},
 			{Name: "trusted_domains", Type: proto.ColumnType_JSON, Hydrate: getAccountTrustedDomains, Description: "Associated domains allow all users with that email domain to be prompted to join the account."},
 			{Name: "managed_domains", Type: proto.ColumnType_JSON, Hydrate: getAccountManagedDomains, Transform: transform.FromField("Domains"), Description: "Associated domains allow all users with that email domain to be prompted to join the account."},
-		},
+		}),
 	}
 }
 
