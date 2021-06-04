@@ -1,10 +1,19 @@
+## v0.0.3 [2021-06-04]
+
+_What's new?_
+
+- New tables added
+  - [zoom_my_user](https://hub.steampipe.io/plugins/turbot/zoom/tables/zoom_my_user)
+
+_Enhancements_
+
+- Add common column of `account_id` to all tables.
 
 ## v0.0.2 [2021-05-06]
 
 _Enhancements_
 
 - Use Steampipe SDK v0.2.8 with retry support ([#1](https://github.com/turbot/steampipe-plugin-zoom/pull/1))
-
 
 ## v0.0.1 [2021-04-30]
 
