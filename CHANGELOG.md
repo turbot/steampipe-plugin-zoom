@@ -5,7 +5,7 @@ _What's new?_
 _Enhancements_
 
 - Recompiled plugin with [steampipe-plugin-sdk v1.6.1](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v161--2021-09-21) ([#5](https://github.com/turbot/steampipe-plugin-zoom/pull/5))
-- Changed the plugin license to Apache 2.0 per turbot/steampipe([#3](https://github.com/turbot/steampipe-plugin-zoom/pull/3))
+- Changed plugin license to Apache 2.0 per [turbot/steampipe](https://github.com/turbot/steampipe/issues/488) ([#3](https://github.com/turbot/steampipe-plugin-zoom/pull/3))
 
 ## v0.0.3 [2021-06-04]
 
