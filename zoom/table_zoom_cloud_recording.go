@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/himalayan-institute/zoom-lib-golang"
 
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
@@ -17,8 +16,11 @@ func tableZoomCloudRecording(ctx context.Context) *plugin.Table {
 		Name:        "zoom_cloud_recording",
 		Description: "Meetings and webinars recorded to the cloud.",
 		List: &plugin.ListConfig{
-			Hydrate:    listCloudRecording,
-			KeyColumns: plugin.SingleColumn("user_id"),
+			Hydrate: listCloudRecording,
+			KeyColumns: []*plugin.KeyColumn{
+				{Name: "user_id", Require: plugin.Required},
+				{Name: "start_time", Operators: []string{">", ">=", "=", "<", "<="}, Require: plugin.Optional},
+			},
 		},
 		// TODO - SDK does not yet support Get
 		Columns: []*plugin.Column{
@@ -61,12 +63,13 @@ func listCloudRecording(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 	// Approach:
 	// * Respect the start_time for providing a range (watch out for caching!)
 	// * By default, provide 30 days of recordings.
-	quals := d.QueryContext.GetQuals()
+
+	quals := d.Quals
 	if quals["start_time"] != nil {
 		for _, q := range quals["start_time"].Quals {
-			ts := ptypes.TimestampString(q.Value.GetTimestampValue())
-			switch q.GetStringValue() {
-			case ">", ">=":
+			ts := q.Value.GetTimestampValue().String()
+			switch q.Operator {
+			case "=", ">=", ">":
 				opts.From = ts[0:10]
 			case "<", "<=":
 				opts.To = ts[0:10]
