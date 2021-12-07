@@ -6,5 +6,5 @@ replace github.com/himalayan-institute/zoom-lib-golang => github.com/e-gineer/zo
 
 require (
 	github.com/himalayan-institute/zoom-lib-golang v1.0.0
-	github.com/turbot/steampipe-plugin-sdk v1.6.1
+	github.com/turbot/steampipe-plugin-sdk v1.8.2
 )
