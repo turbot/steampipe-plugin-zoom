@@ -25,13 +25,11 @@ func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
 
 	// But prefer the config (#1)
 	zoomConfig := GetConfig(d.Connection)
-	if &zoomConfig != nil {
-		if zoomConfig.APIKey != nil {
-			apiKey = *zoomConfig.APIKey
-		}
-		if zoomConfig.APISecret != nil {
-			apiSecret = *zoomConfig.APISecret
-		}
+	if zoomConfig.APIKey != nil {
+		apiKey = *zoomConfig.APIKey
+	}
+	if zoomConfig.APISecret != nil {
+		apiSecret = *zoomConfig.APISecret
 	}
 
 	if apiKey == "" || apiSecret == "" {

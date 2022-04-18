@@ -119,24 +119,3 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	return result, nil
 }
 
-func getUserPermissions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("zoom_user.getUserPermissions", "connection_error", err)
-		return nil, err
-	}
-	user := h.Item.(zoom.User)
-	opts := zoom.GetUserPermissionsOpts{
-		UserID: user.ID,
-	}
-	result, err := conn.GetUserPermissions(opts)
-	if err != nil {
-		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-			// User not found
-			return nil, nil
-		}
-		plugin.Logger(ctx).Error("zoom_user.getUserPermissions", "query_error", err)
-		return nil, err
-	}
-	return result, nil
-}
