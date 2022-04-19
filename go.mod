@@ -1,6 +1,6 @@
 module github.com/turbot/steampipe-plugin-zoom
 
-go 1.17
+go 1.18
 
 replace github.com/himalayan-institute/zoom-lib-golang => github.com/e-gineer/zoom-lib-golang v1.0.1-0.20210430204608-85977a1550a0
 
