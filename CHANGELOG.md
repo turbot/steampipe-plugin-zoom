@@ -1,3 +1,9 @@
+## v0.3.1 [2022-07-08]
+
+_Enhancements_
+
+- Recompiled plugin with [steampipe-plugin-sdk v3.1.0](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v331--2022-06-30) since the plugin failed to start with [steampipe-plugin-sdk v3.3.1](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v331--2022-06-30). ([#19](https://github.com/turbot/steampipe-plugin-zoom/pull/19))
+
 ## v0.3.0 [2022-07-07]
 
 _Enhancements_
