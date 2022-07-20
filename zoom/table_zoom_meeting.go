@@ -19,12 +19,9 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 			KeyColumns: plugin.SingleColumn("user_id"),
 		},
 		Get: &plugin.GetConfig{
-			Hydrate:    getMeeting,
-			KeyColumns: plugin.SingleColumn("id"),
-		},
-		HydrateConfig: []plugin.HydrateConfig{
-			// Zoom quickly throttles on the get meeting API, so be more gentle
-			{Func: getMeeting, MaxConcurrency: 5},
+			Hydrate:    	getMeeting,
+			KeyColumns: 	plugin.SingleColumn("id"),
+			MaxConcurrency: 5,
 		},
 		Columns: zoomAccountColumns([]*plugin.Column{
 			// Top columns
