@@ -2,7 +2,7 @@
 
 _Bug fixes_
 
-- Fixed the `zoom_meeting` table to resolve the plugin validation errors. ([#21](https://github.com/turbot/steampipe-plugin-zoom/pull/21))
+- Fixed the `GetConfig` max concurrency configuration in the `zoom_meeting` table to resolve the plugin validation errors. ([#21](https://github.com/turbot/steampipe-plugin-zoom/pull/21))
 
 _Dependencies_
 
