@@ -1,3 +1,13 @@
+## v0.4.0 [2022-07-21]
+
+_Bug fixes_
+
+- Fixed the `GetConfig` max concurrency configuration in the `zoom_meeting` table to resolve the plugin validation errors. ([#21](https://github.com/turbot/steampipe-plugin-zoom/pull/21))
+
+_Dependencies_
+
+- Recompiled plugin with [steampipe-plugin-sdk v3.3.2](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v332--2022-07-11) which includes several caching fixes. ([#21](https://github.com/turbot/steampipe-plugin-zoom/pull/21))
+
 ## v0.3.1 [2022-07-08]
 
 _Bug fixes_
