@@ -1,3 +1,9 @@
+## v0.5.1 [2023-02-10]
+
+_Dependencies_
+
+- Recompiled plugin with [steampipe-plugin-sdk v4.1.12](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v4112-2023-02-09) which fixes the query caching functionality. ([#26](https://github.com/turbot/steampipe-plugin-zoom/pull/26))
+
 ## v0.5.0 [2022-09-09]
 
 _Dependencies_
