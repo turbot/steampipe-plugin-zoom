@@ -50,7 +50,7 @@ func listCloudRecording(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 		plugin.Logger(ctx).Error("zoom_cloud_recording.listCloudRecording", "connection_error", err)
 		return nil, err
 	}
-	keyQuals := d.KeyColumnQuals
+	keyQuals := d.EqualsQuals
 	hostID := keyQuals["user_id"].GetStringValue()
 	pageSize := 300
 	opts := zoom.ListAllRecordingsOptions{
@@ -106,7 +106,7 @@ func getCloudRecordingSettings(ctx context.Context, d *plugin.QueryData, h *plug
 		plugin.Logger(ctx).Error("zoom_cloud_recording.getCloudRecordingSettings", "connection_error", err)
 		return nil, err
 	}
-	quals := d.KeyColumnQuals
+	quals := d.EqualsQuals
 	id := int(quals["id"].GetInt64Value())
 	if meeting, ok := h.Item.(zoom.CloudRecordingMeeting); ok {
 		id = meeting.ID

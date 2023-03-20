@@ -94,7 +94,7 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 		return nil, err
 	}
 	// Work with quals: email, then id
-	quals := d.KeyColumnQuals
+	quals := d.EqualsQuals
 	emailOrID := quals["email"].GetStringValue()
 	id := quals["id"].GetStringValue()
 	if emailOrID == "" {

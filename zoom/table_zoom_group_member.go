@@ -37,7 +37,7 @@ func listGroupMember(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		plugin.Logger(ctx).Error("zoom_group.listGroupMember", "connection_error", err)
 		return nil, err
 	}
-	groupID := d.KeyColumnQuals["group_id"].GetStringValue()
+	groupID := d.EqualsQuals["group_id"].GetStringValue()
 	pageSize := 1000
 	opts := zoom.ListGroupMembersOptions{
 		GroupID:  groupID,

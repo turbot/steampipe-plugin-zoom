@@ -58,7 +58,7 @@ func getAccountLockSettingsOption(option string, ctx context.Context, d *plugin.
 		plugin.Logger(ctx).Error("zoom_account_lock_settings.getAccountLockSettingsOption", "connection_error", err)
 		return nil, err
 	}
-	id := d.KeyColumnQuals["id"].GetStringValue()
+	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
 	}

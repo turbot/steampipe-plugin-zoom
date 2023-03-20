@@ -60,7 +60,7 @@ func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	if h.Item != nil {
 		id = h.Item.(zoom.Role).ID
 	} else {
-		id = d.KeyColumnQuals["id"].GetStringValue()
+		id = d.EqualsQuals["id"].GetStringValue()
 	}
 	opts := zoom.GetRoleOpts{
 		ID: id,
