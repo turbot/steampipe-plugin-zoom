@@ -52,7 +52,7 @@ steampipe plugin install zoom
 
 | Item | Description |
 | - | - |
-| Credentials | [Create an SDK App](https://marketplace.zoom.us/docs/guides/build/sdk-app) to get the API key and secret. |
+| Credentials | [Create an SDK App](https://marketplace.zoom.us/develop/create) to get the API key and secret. |
 | Permissions | SDK / JWT apps can access all Zoom APIs. |
 | Radius | Each connection represents a single Zoom account. |
 | Resolution |  1. `api_key` and `api_secret` in Steampipe config.<br />2. `ZOOM_API_KEY` and `ZOOM_API_SECRET` environment variables. |
