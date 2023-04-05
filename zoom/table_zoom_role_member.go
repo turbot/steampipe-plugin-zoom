@@ -5,9 +5,9 @@ import (
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableZoomRoleMember(ctx context.Context) *plugin.Table {
@@ -37,7 +37,7 @@ func listRoleMember(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 		plugin.Logger(ctx).Error("zoom_role.listRoleMember", "connection_error", err)
 		return nil, err
 	}
-	roleID := d.KeyColumnQuals["role_id"].GetStringValue()
+	roleID := d.EqualsQuals["role_id"].GetStringValue()
 	pageSize := 1000
 	opts := zoom.ListRoleMembersOptions{
 		RoleID:   roleID,

@@ -5,9 +5,9 @@ import (
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableZoomUser(ctx context.Context) *plugin.Table {
@@ -94,7 +94,7 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 		return nil, err
 	}
 	// Work with quals: email, then id
-	quals := d.KeyColumnQuals
+	quals := d.EqualsQuals
 	emailOrID := quals["email"].GetStringValue()
 	id := quals["id"].GetStringValue()
 	if emailOrID == "" {

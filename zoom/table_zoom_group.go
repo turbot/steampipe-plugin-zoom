@@ -5,9 +5,9 @@ import (
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableZoomGroup(ctx context.Context) *plugin.Table {
@@ -53,7 +53,7 @@ func getGroup(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 		plugin.Logger(ctx).Error("zoom_group.getGroup", "connection_error", err)
 		return nil, err
 	}
-	quals := d.KeyColumnQuals
+	quals := d.EqualsQuals
 	id := quals["id"].GetStringValue()
 	opts := zoom.GetGroupOpts{
 		ID: id,

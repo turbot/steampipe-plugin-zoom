@@ -5,9 +5,9 @@ import (
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableZoomAccountLockSettings(ctx context.Context) *plugin.Table {
@@ -58,7 +58,7 @@ func getAccountLockSettingsOption(option string, ctx context.Context, d *plugin.
 		plugin.Logger(ctx).Error("zoom_account_lock_settings.getAccountLockSettingsOption", "connection_error", err)
 		return nil, err
 	}
-	id := d.KeyColumnQuals["id"].GetStringValue()
+	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
 	}

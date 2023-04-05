@@ -5,9 +5,9 @@ import (
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableZoomRole(ctx context.Context) *plugin.Table {
@@ -60,7 +60,7 @@ func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	if h.Item != nil {
 		id = h.Item.(zoom.Role).ID
 	} else {
-		id = d.KeyColumnQuals["id"].GetStringValue()
+		id = d.EqualsQuals["id"].GetStringValue()
 	}
 	opts := zoom.GetRoleOpts{
 		ID: id,

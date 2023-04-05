@@ -7,8 +7,8 @@ import (
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
@@ -62,7 +62,7 @@ func timeToTimestamp(_ context.Context, d *transform.TransformData) (interface{}
 }
 
 func idString(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	quals := d.KeyColumnQuals
+	quals := d.EqualsQuals
 	id := quals["id"].GetStringValue()
 	// Default to the master account, called me
 	if id == "" {
@@ -72,13 +72,13 @@ func idString(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 }
 
 func roleIDString(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	quals := d.KeyColumnQuals
+	quals := d.EqualsQuals
 	id := quals["role_id"].GetStringValue()
 	return id, nil
 }
 
 func groupIDString(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	quals := d.KeyColumnQuals
+	quals := d.EqualsQuals
 	id := quals["group_id"].GetStringValue()
 	return id, nil
 }

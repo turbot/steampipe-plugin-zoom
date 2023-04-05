@@ -5,9 +5,9 @@ import (
 
 	"github.com/himalayan-institute/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableZoomAccountSettings(ctx context.Context) *plugin.Table {
@@ -96,7 +96,7 @@ func getAccountSettingsOption(option string, ctx context.Context, d *plugin.Quer
 		plugin.Logger(ctx).Error("zoom_account_settings.getAccountSettingsOption", "connection_error", err)
 		return nil, err
 	}
-	id := d.KeyColumnQuals["id"].GetStringValue()
+	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
 	}
@@ -124,7 +124,7 @@ func getAccountTrustedDomains(ctx context.Context, d *plugin.QueryData, h *plugi
 		plugin.Logger(ctx).Error("zoom_account_settings.getAccountTrustedDomainsOption", "connection_error", err)
 		return nil, err
 	}
-	id := d.KeyColumnQuals["id"].GetStringValue()
+	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
 	}
@@ -149,7 +149,7 @@ func getAccountManagedDomains(ctx context.Context, d *plugin.QueryData, h *plugi
 		plugin.Logger(ctx).Error("zoom_account_settings.getAccountManagedDomains", "connection_error", err)
 		return nil, err
 	}
-	id := d.KeyColumnQuals["id"].GetStringValue()
+	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
 	}
