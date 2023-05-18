@@ -3,7 +3,7 @@ package zoom
 import (
 	"context"
 
-	"github.com/himalayan-institute/zoom-lib-golang"
+	"github.com/bigdatasourav/zoom-lib-golang"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -70,6 +70,7 @@ func listUser(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 		PageSize:      300,
 		IncludeFields: &[]string{"custom_attributes", "host_key"},
 	}
+
 	for {
 		result, err := conn.ListUsers(opts)
 		if err != nil {
@@ -118,4 +119,3 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	}
 	return result, nil
 }
-

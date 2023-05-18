@@ -5,7 +5,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/himalayan-institute/zoom-lib-golang"
+	"github.com/bigdatasourav/zoom-lib-golang"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -20,25 +20,29 @@ func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
 	}
 
 	// Default to using env vars (#2)
-	apiKey := os.Getenv("ZOOM_API_KEY")
-	apiSecret := os.Getenv("ZOOM_API_SECRET")
+	accountID := os.Getenv("ZOOM_ACCOUNT_ID")
+	clientID := os.Getenv("ZOOM_CLIENT_ID")
+	clientSecret := os.Getenv("ZOOM_CLIENT_SECRET")
 
 	// But prefer the config (#1)
 	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil {
-		apiKey = *zoomConfig.APIKey
+	if zoomConfig.AccountID != nil {
+		accountID = *zoomConfig.AccountID
 	}
-	if zoomConfig.APISecret != nil {
-		apiSecret = *zoomConfig.APISecret
+	if zoomConfig.ClientID != nil {
+		clientID = *zoomConfig.ClientID
+	}
+	if zoomConfig.ClientSecret != nil {
+		clientSecret = *zoomConfig.ClientSecret
 	}
 
-	if apiKey == "" || apiSecret == "" {
+	if accountID == "" || clientID == "" || clientSecret == "" {
 		// Credentials not set
-		return nil, errors.New("api_key and api_secret must be configured")
+		return nil, errors.New("account_id, client_id and client_secret must be configured")
 	}
 
 	// Configure to automatically wait 1 sec between requests, per Zoom API requirements
-	conn := zoom.NewClient(apiKey, apiSecret)
+	conn := zoom.NewClient(accountID, clientID, clientSecret)
 
 	// Save to cache
 	d.ConnectionManager.Cache.Set(cacheKey, conn)

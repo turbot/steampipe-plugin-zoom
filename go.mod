@@ -2,10 +2,8 @@ module github.com/turbot/steampipe-plugin-zoom
 
 go 1.19
 
-replace github.com/himalayan-institute/zoom-lib-golang => github.com/e-gineer/zoom-lib-golang v1.0.1-0.20210430204608-85977a1550a0
-
 require (
-	github.com/himalayan-institute/zoom-lib-golang v1.0.0
+	github.com/bigdatasourav/zoom-lib-golang v0.2.2
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.4.1
 )
 
@@ -106,7 +104,6 @@ require (
 	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
 	google.golang.org/grpc v1.51.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/dgrijalva/jwt-go.v3 v3.2.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/tomb.v2 v2.0.0-20161208151619-d5d1b5820637 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
