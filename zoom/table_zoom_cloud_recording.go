@@ -45,11 +45,6 @@ func tableZoomCloudRecording(ctx context.Context) *plugin.Table {
 }
 
 func listCloudRecording(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("zoom_cloud_recording.listCloudRecording", "connection_error", err)
-		return nil, err
-	}
 	keyQuals := d.EqualsQuals
 	hostID := keyQuals["user_id"].GetStringValue()
 	pageSize := 300
@@ -79,33 +74,61 @@ func listCloudRecording(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydr
 		opts.From = time.Now().UTC().AddDate(0, -30, 0).Format("2006-01-02")
 	}
 
-	for {
-		result, err := conn.ListAllRecordings(opts)
+	zoomConfig := GetConfig(d.Connection)
+	if zoomConfig.APIKey != nil { // check if JWT creds is set
+		conn, err := connect(ctx, d)
 		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Host not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_cloud_recording.listCloudRecording", "query_error", err)
+			plugin.Logger(ctx).Error("zoom_cloud_recording.connect.listCloudRecording", "connection_error", err)
 			return nil, err
 		}
-		for _, i := range result.Meetings {
-			d.StreamListItem(ctx, i)
+
+		for {
+			result, err := conn.ListAllRecordings(opts)
+			if err != nil {
+				if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+					// Host not found
+					return nil, nil
+				}
+				plugin.Logger(ctx).Error("zoom_cloud_recording.connect.listCloudRecording", "query_error", err)
+				return nil, err
+			}
+			for _, i := range result.Meetings {
+				d.StreamListItem(ctx, i)
+			}
+			if result.NextPageToken == "" {
+				break
+			}
+			opts.NextPageToken = result.NextPageToken
 		}
-		if result.NextPageToken == "" {
-			break
+	} else { // check if server-to-server oauth creds is set
+		conn, err := connectOAuth(ctx, d)
+		if err != nil {
+			plugin.Logger(ctx).Error("zoom_cloud_recording.connectOAuth.listCloudRecording", "connection_error", err)
+			return nil, err
 		}
-		opts.NextPageToken = result.NextPageToken
+		for {
+			result, err := conn.ListAllRecordings(opts)
+			if err != nil {
+				if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+					// Host not found
+					return nil, nil
+				}
+				plugin.Logger(ctx).Error("zoom_cloud_recording.connectOAuth.listCloudRecording", "query_error", err)
+				return nil, err
+			}
+			for _, i := range result.Meetings {
+				d.StreamListItem(ctx, i)
+			}
+			if result.NextPageToken == "" {
+				break
+			}
+			opts.NextPageToken = result.NextPageToken
+		}
 	}
 	return nil, nil
 }
 
 func getCloudRecordingSettings(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("zoom_cloud_recording.getCloudRecordingSettings", "connection_error", err)
-		return nil, err
-	}
 	quals := d.EqualsQuals
 	id := int(quals["id"].GetInt64Value())
 	if meeting, ok := h.Item.(zoom.CloudRecordingMeeting); ok {
@@ -114,14 +137,39 @@ func getCloudRecordingSettings(ctx context.Context, d *plugin.QueryData, h *plug
 	opts := zoom.GetMeetingRecordingSettingsOptions{
 		MeetingID: id,
 	}
-	result, err := conn.GetMeetingRecordingSettings(opts)
-	if err != nil {
-		if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
-			// Not found
-			return nil, nil
+
+	zoomConfig := GetConfig(d.Connection)
+	if zoomConfig.APIKey != nil { // check if JWT creds is set
+		conn, err := connect(ctx, d)
+		if err != nil {
+			plugin.Logger(ctx).Error("zoom_cloud_recording.connect.getCloudRecordingSettings", "connection_error", err)
+			return nil, err
 		}
-		plugin.Logger(ctx).Error("zoom_cloud_recording.getCloudRecordingSettings", "query_error", err)
-		return nil, err
+		result, err := conn.GetMeetingRecordingSettings(opts)
+		if err != nil {
+			if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
+				// Not found
+				return nil, nil
+			}
+			plugin.Logger(ctx).Error("zoom_cloud_recording.connect.getCloudRecordingSettings", "query_error", err)
+			return nil, err
+		}
+		return result, nil
+	} else { // check if server-to-server oauth creds is set
+		conn, err := connectOAuth(ctx, d)
+		if err != nil {
+			plugin.Logger(ctx).Error("zoom_cloud_recording.connectOAuth.getCloudRecordingSettings", "connection_error", err)
+			return nil, err
+		}
+		result, err := conn.GetMeetingRecordingSettings(opts)
+		if err != nil {
+			if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
+				// Not found
+				return nil, nil
+			}
+			plugin.Logger(ctx).Error("zoom_cloud_recording.connectOAuth.getCloudRecordingSettings", "query_error", err)
+			return nil, err
+		}
+		return result, nil
 	}
-	return result, nil
 }

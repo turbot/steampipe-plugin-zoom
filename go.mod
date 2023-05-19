@@ -3,7 +3,7 @@ module github.com/turbot/steampipe-plugin-zoom
 go 1.19
 
 require (
-	github.com/bigdatasourav/zoom-lib-golang v0.2.2
+	github.com/bigdatasourav/zoom-lib-golang v0.2.4
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.4.1
 )
 
@@ -34,6 +34,7 @@ require (
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect

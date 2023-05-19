@@ -19,8 +19,8 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 			KeyColumns: plugin.SingleColumn("user_id"),
 		},
 		Get: &plugin.GetConfig{
-			Hydrate:    	getMeeting,
-			KeyColumns: 	plugin.SingleColumn("id"),
+			Hydrate:        getMeeting,
+			KeyColumns:     plugin.SingleColumn("id"),
 			MaxConcurrency: 5,
 		},
 		Columns: zoomAccountColumns([]*plugin.Column{
@@ -52,11 +52,6 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 }
 
 func listMeeting(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("zoom_meeting.listMeeting", "connection_error", err)
-		return nil, err
-	}
 	quals := d.EqualsQuals
 	userID := quals["user_id"].GetStringValue()
 	pageSize := 300
@@ -67,33 +62,60 @@ func listMeeting(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData
 		Type:     "scheduled",
 		PageSize: &pageSize,
 	}
-	for {
-		result, err := conn.ListMeetings(opts)
+	zoomConfig := GetConfig(d.Connection)
+	if zoomConfig.APIKey != nil { // check if JWT creds is set
+		conn, err := connect(ctx, d)
 		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Host not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_meeting.listMeeting", "query_error", err)
+			plugin.Logger(ctx).Error("zoom_meeting.connect.listMeeting", "connection_error", err)
 			return nil, err
 		}
-		for _, i := range result.Meetings {
-			d.StreamListItem(ctx, i)
+		for {
+			result, err := conn.ListMeetings(opts)
+			if err != nil {
+				if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+					// Host not found
+					return nil, nil
+				}
+				plugin.Logger(ctx).Error("zoom_meeting.connect.listMeeting", "query_error", err)
+				return nil, err
+			}
+			for _, i := range result.Meetings {
+				d.StreamListItem(ctx, i)
+			}
+			if result.NextPageToken == "" {
+				break
+			}
+			opts.NextPageToken = &result.NextPageToken
 		}
-		if result.NextPageToken == "" {
-			break
+	} else { // check if server-to-server oauth creds is set
+		conn, err := connectOAuth(ctx, d)
+		if err != nil {
+			plugin.Logger(ctx).Error("zoom_meeting.connectOAuth.listMeeting", "connection_error", err)
+			return nil, err
 		}
-		opts.NextPageToken = &result.NextPageToken
+		for {
+			result, err := conn.ListMeetings(opts)
+			if err != nil {
+				if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+					// Host not found
+					return nil, nil
+				}
+				plugin.Logger(ctx).Error("zoom_meeting.connectOAuth.listMeeting", "query_error", err)
+				return nil, err
+			}
+			for _, i := range result.Meetings {
+				d.StreamListItem(ctx, i)
+			}
+			if result.NextPageToken == "" {
+				break
+			}
+			opts.NextPageToken = &result.NextPageToken
+		}
 	}
 	return nil, nil
 }
 
 func getMeeting(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	conn, err := connect(ctx, d)
-	if err != nil {
-		plugin.Logger(ctx).Error("zoom_meeting.getMeeting", "connection_error", err)
-		return nil, err
-	}
 	quals := d.EqualsQuals
 	id := int(quals["id"].GetInt64Value())
 	if meeting, ok := h.Item.(zoom.ListMeeting); ok {
@@ -102,19 +124,47 @@ func getMeeting(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	opts := zoom.GetMeetingOptions{
 		MeetingID: id,
 	}
-
-	getMeetingWithRetry := func(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-		return conn.GetMeeting(opts)
-	}
-	result, err := plugin.RetryHydrate(ctx, d, h, getMeetingWithRetry, &plugin.RetryConfig{ShouldRetryError: shouldRetryError})
-
-	if err != nil {
-		if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
-			// Meeting not found
-			return nil, nil
+	zoomConfig := GetConfig(d.Connection)
+	if zoomConfig.APIKey != nil { // check if JWT creds is set
+		conn, err := connect(ctx, d)
+		if err != nil {
+			plugin.Logger(ctx).Error("zoom_meeting.connect.getMeeting", "connection_error", err)
+			return nil, err
 		}
-		plugin.Logger(ctx).Error("zoom_meeting.getMeeting", "query_error", err)
-		return nil, err
+		getMeetingWithRetry := func(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+			return conn.GetMeeting(opts)
+		}
+		result, err := plugin.RetryHydrate(ctx, d, h, getMeetingWithRetry, &plugin.RetryConfig{ShouldRetryError: shouldRetryError})
+
+		if err != nil {
+			if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
+				// Meeting not found
+				return nil, nil
+			}
+			plugin.Logger(ctx).Error("zoom_meeting.connect.getMeeting", "query_error", err)
+			return nil, err
+		}
+		return result, nil
+	} else { // check if server-to-server oauth creds is set
+		conn, err := connectOAuth(ctx, d)
+		if err != nil {
+			plugin.Logger(ctx).Error("zoom_meeting.connectOAuth.getMeeting", "connection_error", err)
+			return nil, err
+		}
+
+		getMeetingWithRetry := func(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+			return conn.GetMeeting(opts)
+		}
+		result, err := plugin.RetryHydrate(ctx, d, h, getMeetingWithRetry, &plugin.RetryConfig{ShouldRetryError: shouldRetryError})
+
+		if err != nil {
+			if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
+				// Meeting not found
+				return nil, nil
+			}
+			plugin.Logger(ctx).Error("zoom_meeting.connectOAuth.getMeeting", "query_error", err)
+			return nil, err
+		}
+		return result, nil
 	}
-	return result, nil
 }

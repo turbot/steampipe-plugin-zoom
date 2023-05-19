@@ -12,13 +12,52 @@ import (
 )
 
 func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
-
-	// Load connection from cache, which preserves throttling protection etc
-	cacheKey := "zoom"
-	if cachedData, ok := d.ConnectionManager.Cache.Get(cacheKey); ok {
-		return cachedData.(*zoom.Client), nil
+	conn, err := connectCached(ctx, d, nil)
+	if err != nil {
+		return nil, err
 	}
 
+	return conn.(*zoom.Client), nil
+}
+
+func connectOAuth(ctx context.Context, d *plugin.QueryData) (*zoom.OAuthClient, error) {
+	conn, err := connectOAuthCached(ctx, d, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn.(*zoom.OAuthClient), nil
+}
+
+var connectCached = plugin.HydrateFunc(connectUncached).Memoize()
+var connectOAuthCached = plugin.HydrateFunc(connectOAuthUncached).Memoize()
+
+func connectUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
+	// Default to using env vars (#2)
+	apiKey := os.Getenv("ZOOM_API_KEY")
+	apiSecret := os.Getenv("ZOOM_API_SECRET")
+
+	// But prefer the config (#1)
+	zoomConfig := GetConfig(d.Connection)
+	if zoomConfig.APIKey != nil {
+		apiKey = *zoomConfig.APIKey
+	}
+	if zoomConfig.APISecret != nil {
+		apiSecret = *zoomConfig.APISecret
+	}
+
+	if apiKey == "" || apiSecret == "" {
+		// Credentials not set
+		return nil, errors.New("api_key and api_secret must be configured")
+	}
+
+	// Configure to automatically wait 1 sec between requests, per Zoom API requirements
+	conn := zoom.NewClient(apiKey, apiSecret)
+
+	return conn, nil
+}
+
+func connectOAuthUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
 	// Default to using env vars (#2)
 	accountID := os.Getenv("ZOOM_ACCOUNT_ID")
 	clientID := os.Getenv("ZOOM_CLIENT_ID")
@@ -42,10 +81,7 @@ func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
 	}
 
 	// Configure to automatically wait 1 sec between requests, per Zoom API requirements
-	conn := zoom.NewClient(accountID, clientID, clientSecret)
-
-	// Save to cache
-	d.ConnectionManager.Cache.Set(cacheKey, conn)
+	conn := zoom.NewOAuthClient(accountID, clientID, clientSecret)
 
 	return conn, nil
 }

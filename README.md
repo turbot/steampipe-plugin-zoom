@@ -36,14 +36,29 @@ connection "zoom" {
 }
 ```
 
+or you may specify the APIKey and APISecret to authenticate:
+
+- `api_key`: The Zoom API key provided by SDK/JWT OAuth app.
+- `api_secret`: The Zoom API secret provided by SDK/JWT OAuth app.
+
+```hcl
+connection "zoom" {
+  plugin     = "zoom"
+  api_key    = "9m_kAcfuTlW_JCrvoMYK6g"
+  api_secret = "lEEDVf3SgyQWckN3ASqMpXWpCixkwMzgnZY7"
+}
+```
+
 or through environment variables
 
-The Zoom plugin will use the Zoom environment variable to obtain credentials **only if the `account_id`,`client_id`, and `client_secret` is not specified** in the connection:
+The Zoom plugin will use the Zoom environment variable to obtain credentials **only if the `account_id`,`client_id`, and`client_secret` or `api_key` and `api_secret` is not specified** in the connection:
 
 ```sh
 export ZOOM_ACCOUNT_ID="Xt1aUD4WQ56w7hDhVbtDp"
 export ZOOM_CLIENT_ID="MZw2piRfTsOdpwx2Dh5U"
 export ZOOM_CLIENT_SECRET="04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
+export ZOOM_API_KEY="9m_kAcfuTlW_JCrvoMYK6g"
+export ZOOM_API_SECRET="lEEDVf3SgyQWckN3ASqMpXWpCixkwMzgnZY7"
 ```
 
 List your Zoom users:
