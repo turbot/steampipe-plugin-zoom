@@ -3,10 +3,10 @@ package zoom
 import (
 	"context"
 
-	"github.com/bigdatasourav/zoom-lib-golang"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	"github.com/turbot/zoom-lib-golang"
 )
 
 // Append the standard zoom account columns used by many tables

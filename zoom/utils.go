@@ -5,7 +5,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/bigdatasourav/zoom-lib-golang"
+	"github.com/turbot/zoom-lib-golang"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"

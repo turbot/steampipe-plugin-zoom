@@ -3,7 +3,7 @@ package zoom
 import (
 	"context"
 
-	"github.com/bigdatasourav/zoom-lib-golang"
+	"github.com/turbot/zoom-lib-golang"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
