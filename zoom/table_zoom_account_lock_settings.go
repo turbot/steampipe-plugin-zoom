@@ -53,6 +53,11 @@ func getAccountLockSettingsMeetingSecurity(ctx context.Context, d *plugin.QueryD
 }
 
 func getAccountLockSettingsOption(option string, ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_account_lock_settings.getAccountLockSettingsOption", "connection_error", err)
+		return nil, err
+	}
 	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
@@ -63,40 +68,14 @@ func getAccountLockSettingsOption(option string, ctx context.Context, d *plugin.
 	if option != "" {
 		opts.Option = option
 	}
-
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_lock_settings.connect.getAccountLockSettingsOption", "connection_error", err)
-			return nil, err
+	result, err := conn.GetAccountLockSettings(opts)
+	if err != nil {
+		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+			// Not found
+			return nil, nil
 		}
-		result, err := conn.GetAccountLockSettings(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_lock_settings.connect.getAccountLockSettingsOption", "query_error", err)
-			return nil, err
-		}
-		return result, nil
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_lock_settings.connectOAuth.getAccountLockSettingsOption", "connection_error", err)
-			return nil, err
-		}
-
-		result, err := conn.GetAccountLockSettings(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_lock_settings.connectOAuth.getAccountLockSettingsOption", "query_error", err)
-			return nil, err
-		}
-		return result, nil
+		plugin.Logger(ctx).Error("zoom_account_lock_settings.getAccountLockSettingsOption", "query_error", err)
+		return nil, err
 	}
+	return result, nil
 }

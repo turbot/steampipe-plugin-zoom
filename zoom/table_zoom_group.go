@@ -31,77 +31,41 @@ func tableZoomGroup(ctx context.Context) *plugin.Table {
 }
 
 func listGroup(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connect.listGroup", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.ListGroups()
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connect.listGroup", "query_error", err)
-			return nil, err
-		}
-		for _, i := range result.Groups {
-			d.StreamListItem(ctx, i)
-		}
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connectOAuth.listGroup", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.ListGroups()
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connectOAuth.listGroup", "query_error", err)
-			return nil, err
-		}
-		for _, i := range result.Groups {
-			d.StreamListItem(ctx, i)
-		}
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_group.listGroup", "connection_error", err)
+		return nil, err
+	}
+	result, err := conn.ListGroups()
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_group.listGroup", "query_error", err)
+		return nil, err
+	}
+	for _, i := range result.Groups {
+		d.StreamListItem(ctx, i)
 	}
 	return nil, nil
 }
 
 func getGroup(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_group.getGroup", "connection_error", err)
+		return nil, err
+	}
 	quals := d.EqualsQuals
 	id := quals["id"].GetStringValue()
 	opts := zoom.GetGroupOpts{
 		ID: id,
 	}
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if the jwt creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connect.getGroup", "connection_error", err)
-			return nil, err
+	result, err := conn.GetGroup(opts)
+	if err != nil {
+		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+			// Group not found
+			return nil, nil
 		}
-		result, err := conn.GetGroup(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Group not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_group.connect.getGroup", "query_error", err)
-			return nil, err
-		}
-		return result, nil
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connectOAuth.getGroup", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetGroup(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Group not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_group.connectOAuth.getGroup", "query_error", err)
-			return nil, err
-		}
-		return result, nil
+		plugin.Logger(ctx).Error("zoom_group.getGroup", "query_error", err)
+		return nil, err
 	}
+	return result, nil
 }

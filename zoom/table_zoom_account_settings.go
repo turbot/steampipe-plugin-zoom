@@ -91,6 +91,11 @@ func getAccountSettingsMeetingSecurity(ctx context.Context, d *plugin.QueryData,
 }
 
 func getAccountSettingsOption(option string, ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_account_settings.getAccountSettingsOption", "connection_error", err)
+		return nil, err
+	}
 	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
@@ -101,44 +106,24 @@ func getAccountSettingsOption(option string, ctx context.Context, d *plugin.Quer
 	if option != "" {
 		opts.Option = option
 	}
-
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_settings.connect.getAccountSettingsOption", "connection_error", err)
-			return nil, err
+	result, err := conn.GetAccountSettings(opts)
+	if err != nil {
+		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+			// Not found
+			return nil, nil
 		}
-		result, err := conn.GetAccountSettings(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_settings.connect.getAccountSettingsOption", "query_error", err)
-			return nil, err
-		}
-		return result, nil
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_settings.connectOAuth.getAccountSettingsOption", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetAccountSettings(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_settings.connectOAuth.getAccountSettingsOption", "query_error", err)
-			return nil, err
-		}
-		return result, nil
+		plugin.Logger(ctx).Error("zoom_account_settings.getAccountSettingsOption", "query_error", err)
+		return nil, err
 	}
+	return result, nil
 }
 
 func getAccountTrustedDomains(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_account_settings.getAccountTrustedDomainsOption", "connection_error", err)
+		return nil, err
+	}
 	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
@@ -146,43 +131,24 @@ func getAccountTrustedDomains(ctx context.Context, d *plugin.QueryData, h *plugi
 	opts := zoom.GetAccountTrustedDomainsOpts{
 		AccountID: id,
 	}
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_settings.connect.getAccountTrustedDomainsOption", "connection_error", err)
-			return nil, err
+	result, err := conn.GetAccountTrustedDomains(opts)
+	if err != nil {
+		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+			// Not found
+			return nil, nil
 		}
-		result, err := conn.GetAccountTrustedDomains(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_settings.connect.getAccountTrustedDomainsOption", "query_error", err)
-			return nil, err
-		}
-		return result, nil
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_settings.connectOAuth.getAccountTrustedDomainsOption", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetAccountTrustedDomains(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_settings.connectOAuth.getAccountTrustedDomainsOption", "query_error", err)
-			return nil, err
-		}
-		return result, nil
+		plugin.Logger(ctx).Error("zoom_account_settings.getAccountTrustedDomainsOption", "query_error", err)
+		return nil, err
 	}
+	return result, nil
 }
 
 func getAccountManagedDomains(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_account_settings.getAccountManagedDomains", "connection_error", err)
+		return nil, err
+	}
 	id := d.EqualsQuals["id"].GetStringValue()
 	if id == "" {
 		id = "me"
@@ -190,46 +156,18 @@ func getAccountManagedDomains(ctx context.Context, d *plugin.QueryData, h *plugi
 	opts := zoom.GetAccountManagedDomainsOpts{
 		AccountID: id,
 	}
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_settings.connect.getAccountManagedDomains", "connection_error", err)
-			return nil, err
+	result, err := conn.GetAccountManagedDomains(opts)
+	if err != nil {
+		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+			// Not found
+			return nil, nil
 		}
-		result, err := conn.GetAccountManagedDomains(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_settings.connect.getAccountManagedDomains", "query_error", err)
-			return nil, err
-		}
-		// Always return an array
-		if result.Domains == nil {
-			result.Domains = []string{}
-		}
-		return result, nil
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_account_settings.connectOAuth.getAccountManagedDomains", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetAccountManagedDomains(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_account_settings.connectOAuth.getAccountManagedDomains", "query_error", err)
-			return nil, err
-		}
-		// Always return an array
-		if result.Domains == nil {
-			result.Domains = []string{}
-		}
-		return result, nil
+		plugin.Logger(ctx).Error("zoom_account_settings.getAccountManagedDomains", "query_error", err)
+		return nil, err
 	}
+	// Always return an array
+	if result.Domains == nil {
+		result.Domains = []string{}
+	}
+	return result, nil
 }

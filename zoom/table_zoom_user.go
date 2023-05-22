@@ -60,57 +60,39 @@ func tableZoomUser(ctx context.Context) *plugin.Table {
 }
 
 func listUser(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_user.listUser", "connection_error", err)
+		return nil, err
+	}
+
 	opts := zoom.ListUsersOptions{
 		PageSize:      300,
 		IncludeFields: &[]string{"custom_attributes", "host_key"},
 	}
-
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if jwt creds is set
-		conn, err := connect(ctx, d)
+	for {
+		result, err := conn.ListUsers(opts)
 		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connect.listUser", "connection_error", err)
+			plugin.Logger(ctx).Error("zoom_user.listUser", "query_error", err)
 			return nil, err
 		}
-		for {
-			result, err := conn.ListUsers(opts)
-			if err != nil {
-				plugin.Logger(ctx).Error("zoom_user.connect.listUser", "query_error", err)
-				return nil, err
-			}
-			for _, i := range result.Users {
-				d.StreamListItem(ctx, i)
-			}
-			if result.NextPageToken == "" {
-				break
-			}
-			opts.NextPageToken = &result.NextPageToken
+		for _, i := range result.Users {
+			d.StreamListItem(ctx, i)
 		}
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connectOAuth.listUser", "connection_error", err)
-			return nil, err
+		if result.NextPageToken == "" {
+			break
 		}
-		for {
-			result, err := conn.ListUsers(opts)
-			if err != nil {
-				plugin.Logger(ctx).Error("zoom_user.connectOAuth.listUser", "query_error", err)
-				return nil, err
-			}
-			for _, i := range result.Users {
-				d.StreamListItem(ctx, i)
-			}
-			if result.NextPageToken == "" {
-				break
-			}
-			opts.NextPageToken = &result.NextPageToken
-		}
+		opts.NextPageToken = &result.NextPageToken
 	}
 	return nil, nil
 }
 
 func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_user.getUser", "connection_error", err)
+		return nil, err
+	}
 	// Work with quals: email, then id
 	quals := d.EqualsQuals
 	emailOrID := quals["email"].GetStringValue()
@@ -125,38 +107,14 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	opts := zoom.GetUserOpts{
 		EmailOrID: emailOrID,
 	}
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if jwt creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connect.getUser", "connection_error", err)
-			return nil, err
+	result, err := conn.GetUser(opts)
+	if err != nil {
+		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+			// User not found
+			return nil, nil
 		}
-		result, err := conn.GetUser(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// User not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_user.connect.getUser", "query_error", err)
-			return nil, err
-		}
-		return result, nil
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connectOAuth.getUser", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetUser(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// User not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_user.connectOAuth.getUser", "query_error", err)
-			return nil, err
-		}
-		return result, nil
+		plugin.Logger(ctx).Error("zoom_user.getUser", "query_error", err)
+		return nil, err
 	}
+	return result, nil
 }

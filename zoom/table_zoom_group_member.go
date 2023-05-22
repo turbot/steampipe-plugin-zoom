@@ -32,55 +32,30 @@ func tableZoomGroupMember(ctx context.Context) *plugin.Table {
 }
 
 func listGroupMember(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_group.listGroupMember", "connection_error", err)
+		return nil, err
+	}
 	groupID := d.EqualsQuals["group_id"].GetStringValue()
 	pageSize := 1000
 	opts := zoom.ListGroupMembersOptions{
 		GroupID:  groupID,
 		PageSize: &pageSize,
 	}
-
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if jwt creds is set
-		conn, err := connect(ctx, d)
+	for {
+		result, err := conn.ListGroupMembers(opts)
 		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connect.listGroupMember", "connection_error", err)
+			plugin.Logger(ctx).Error("zoom_group.listGroupMember", "query_error", err)
 			return nil, err
 		}
-		for {
-			result, err := conn.ListGroupMembers(opts)
-			if err != nil {
-				plugin.Logger(ctx).Error("zoom_group.connect.listGroupMember", "query_error", err)
-				return nil, err
-			}
-			for _, i := range result.Members {
-				d.StreamListItem(ctx, i)
-			}
-			if result.NextPageToken == "" {
-				break
-			}
-			opts.NextPageToken = &result.NextPageToken
+		for _, i := range result.Members {
+			d.StreamListItem(ctx, i)
 		}
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_group.connectOAuth.listGroupMember", "connection_error", err)
-			return nil, err
+		if result.NextPageToken == "" {
+			break
 		}
-
-		for {
-			result, err := conn.ListGroupMembers(opts)
-			if err != nil {
-				plugin.Logger(ctx).Error("zoom_group.connectOAuth.listGroupMember", "query_error", err)
-				return nil, err
-			}
-			for _, i := range result.Members {
-				d.StreamListItem(ctx, i)
-			}
-			if result.NextPageToken == "" {
-				break
-			}
-			opts.NextPageToken = &result.NextPageToken
-		}
+		opts.NextPageToken = &result.NextPageToken
 	}
 	return nil, nil
 }

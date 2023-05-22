@@ -20,22 +20,15 @@ func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
 	return conn.(*zoom.Client), nil
 }
 
-func connectOAuth(ctx context.Context, d *plugin.QueryData) (*zoom.OAuthClient, error) {
-	conn, err := connectOAuthCached(ctx, d, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return conn.(*zoom.OAuthClient), nil
-}
-
 var connectCached = plugin.HydrateFunc(connectUncached).Memoize()
-var connectOAuthCached = plugin.HydrateFunc(connectOAuthUncached).Memoize()
 
 func connectUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
 	// Default to using env vars (#2)
 	apiKey := os.Getenv("ZOOM_API_KEY")
 	apiSecret := os.Getenv("ZOOM_API_SECRET")
+	accountID := os.Getenv("ZOOM_ACCOUNT_ID")
+	clientID := os.Getenv("ZOOM_CLIENT_ID")
+	clientSecret := os.Getenv("ZOOM_CLIENT_SECRET")
 
 	// But prefer the config (#1)
 	zoomConfig := GetConfig(d.Connection)
@@ -45,26 +38,6 @@ func connectUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	if zoomConfig.APISecret != nil {
 		apiSecret = *zoomConfig.APISecret
 	}
-
-	if apiKey == "" || apiSecret == "" {
-		// Credentials not set
-		return nil, errors.New("api_key and api_secret must be configured")
-	}
-
-	// Configure to automatically wait 1 sec between requests, per Zoom API requirements
-	conn := zoom.NewClient(apiKey, apiSecret)
-
-	return conn, nil
-}
-
-func connectOAuthUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
-	// Default to using env vars (#2)
-	accountID := os.Getenv("ZOOM_ACCOUNT_ID")
-	clientID := os.Getenv("ZOOM_CLIENT_ID")
-	clientSecret := os.Getenv("ZOOM_CLIENT_SECRET")
-
-	// But prefer the config (#1)
-	zoomConfig := GetConfig(d.Connection)
 	if zoomConfig.AccountID != nil {
 		accountID = *zoomConfig.AccountID
 	}
@@ -76,14 +49,20 @@ func connectOAuthUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 	}
 
 	if accountID == "" || clientID == "" || clientSecret == "" {
-		// Credentials not set
-		return nil, errors.New("account_id, client_id and client_secret must be configured")
+		if apiKey == "" || apiSecret == "" {
+			// Credentials not set
+			return nil, errors.New("server-to-server oauth app or jwt app credentials must be configured")
+		}
 	}
 
-	// Configure to automatically wait 1 sec between requests, per Zoom API requirements
-	conn := zoom.NewOAuthClient(accountID, clientID, clientSecret)
-
-	return conn, nil
+	// prefer server-to-server oauth app creds
+	if accountID != "" || clientID != "" || clientSecret != "" {
+		conn := zoom.NewClient("", "", accountID, clientID, clientSecret)
+		return conn, nil
+	} else {
+		conn := zoom.NewClient(apiKey, apiSecret, "", "", "")
+		return conn, nil
+	}
 }
 
 func timeToTimestamp(_ context.Context, d *transform.TransformData) (interface{}, error) {

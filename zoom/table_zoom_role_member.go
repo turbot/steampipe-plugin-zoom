@@ -32,53 +32,30 @@ func tableZoomRoleMember(ctx context.Context) *plugin.Table {
 }
 
 func listRoleMember(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_role.listRoleMember", "connection_error", err)
+		return nil, err
+	}
 	roleID := d.EqualsQuals["role_id"].GetStringValue()
 	pageSize := 1000
 	opts := zoom.ListRoleMembersOptions{
 		RoleID:   roleID,
 		PageSize: &pageSize,
 	}
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
+	for {
+		result, err := conn.ListRoleMembers(opts)
 		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connect.listRoleMember", "connection_error", err)
+			plugin.Logger(ctx).Error("zoom_role.listRoleMember", "query_error", err)
 			return nil, err
 		}
-		for {
-			result, err := conn.ListRoleMembers(opts)
-			if err != nil {
-				plugin.Logger(ctx).Error("zoom_role.connect.listRoleMember", "query_error", err)
-				return nil, err
-			}
-			for _, i := range result.Members {
-				d.StreamListItem(ctx, i)
-			}
-			if result.NextPageToken == "" {
-				break
-			}
-			opts.NextPageToken = result.NextPageToken
+		for _, i := range result.Members {
+			d.StreamListItem(ctx, i)
 		}
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connectOAuth.listRoleMember", "connection_error", err)
-			return nil, err
+		if result.NextPageToken == "" {
+			break
 		}
-		for {
-			result, err := conn.ListRoleMembers(opts)
-			if err != nil {
-				plugin.Logger(ctx).Error("zoom_role.connectOAuth.listRoleMember", "query_error", err)
-				return nil, err
-			}
-			for _, i := range result.Members {
-				d.StreamListItem(ctx, i)
-			}
-			if result.NextPageToken == "" {
-				break
-			}
-			opts.NextPageToken = result.NextPageToken
-		}
+		opts.NextPageToken = result.NextPageToken
 	}
 	return nil, nil
 }

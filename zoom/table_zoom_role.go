@@ -34,40 +34,28 @@ func tableZoomRole(ctx context.Context) *plugin.Table {
 }
 
 func listRole(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connect.listRole", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.ListRoles()
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connect.listRole", "query_error", err)
-			return nil, err
-		}
-		for _, i := range result.Roles {
-			d.StreamListItem(ctx, i)
-		}
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connectOAuth.listRole", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.ListRoles()
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connectOAuth.listRole", "query_error", err)
-			return nil, err
-		}
-		for _, i := range result.Roles {
-			d.StreamListItem(ctx, i)
-		}
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_role.listRole", "connection_error", err)
+		return nil, err
+	}
+	result, err := conn.ListRoles()
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_role.listRole", "query_error", err)
+		return nil, err
+	}
+	for _, i := range result.Roles {
+		d.StreamListItem(ctx, i)
 	}
 	return nil, nil
 }
 
 func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_role.getRole", "connection_error", err)
+		return nil, err
+	}
 	var id string
 	if h.Item != nil {
 		id = h.Item.(zoom.Role).ID
@@ -77,38 +65,14 @@ func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	opts := zoom.GetRoleOpts{
 		ID: id,
 	}
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connect.getRole", "connection_error", err)
-			return nil, err
+	result, err := conn.GetRole(opts)
+	if err != nil {
+		if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
+			// Role not found
+			return nil, nil
 		}
-		result, err := conn.GetRole(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Role not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_role.connect.getRole", "query_error", err)
-			return nil, err
-		}
-		return result, nil
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_role.connectOAuth.getRole", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetRole(opts)
-		if err != nil {
-			if e, ok := err.(*zoom.APIError); ok && e.Code == 1001 {
-				// Role not found
-				return nil, nil
-			}
-			plugin.Logger(ctx).Error("zoom_role.connectOAuth.getRole", "query_error", err)
-			return nil, err
-		}
-		return result, nil
+		plugin.Logger(ctx).Error("zoom_role.getRole", "query_error", err)
+		return nil, err
 	}
+	return result, nil
 }

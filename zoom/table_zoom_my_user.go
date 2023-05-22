@@ -28,34 +28,19 @@ func tableZoomMyUser(ctx context.Context) *plugin.Table {
 }
 
 func listMyUser(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_user.listMyUser", "connection_error", err)
+		return nil, err
+	}
 	opts := zoom.GetUserOpts{
 		EmailOrID: "me",
 	}
-	zoomConfig := GetConfig(d.Connection)
-	if zoomConfig.APIKey != nil { // check if JWT creds is set
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connect.listMyUser", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetUser(opts)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connect.listMyUser", "query_error", err, "opts", opts)
-			return nil, err
-		}
-		d.StreamListItem(ctx, result)
-	} else { // check if server-to-server oauth creds is set
-		conn, err := connectOAuth(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connectOAuth.listMyUser", "connection_error", err)
-			return nil, err
-		}
-		result, err := conn.GetUser(opts)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.connectOAuth.listMyUser", "query_error", err, "opts", opts)
-			return nil, err
-		}
-		d.StreamListItem(ctx, result)
+	result, err := conn.GetUser(opts)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_user.getMyUser", "query_error", err, "opts", opts)
+		return nil, err
 	}
+	d.StreamListItem(ctx, result)
 	return nil, nil
 }

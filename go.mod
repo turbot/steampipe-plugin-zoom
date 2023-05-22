@@ -3,7 +3,7 @@ module github.com/turbot/steampipe-plugin-zoom
 go 1.19
 
 require (
-	github.com/bigdatasourav/zoom-lib-golang v0.2.4
+	github.com/bigdatasourav/zoom-lib-golang v0.2.5
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.4.1
 )
 
