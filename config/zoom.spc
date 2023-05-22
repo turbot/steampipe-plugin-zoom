@@ -9,24 +9,26 @@ connection "zoom" {
 
   # `account_id`(required) - The Zoom account ID.
   # Can also be set with the ZOOM_ACCOUNT_ID environment variable.
-  # account_id    = "Xt1aUD4WQ56w7hDhVbtDp"
+  # account_id = "Xt1aUD4WQ56w7hDhVbtDp"
 
   # `client_id`(required) - The Zoom Client ID provided by Server-to-Server OAuth app.
   # Can also be set with the ZOOM_CLIENT_ID environment variable.
-  # client_id    = "MZw2piRfTsOdpwx2Dh5U"
+  # client_id = "MZw2piRfTsOdpwx2Dh5U"
 
   # `client_secret`(required) - The Zoom Client Secret provided by Server-to-Server OAuth app.
   # Can also be set with the ZOOM_CLIENT_SECRET environment variable.
-  # client_secret    = "04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
+  # client_secret = "04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
 
   ## SDK/JWT app credentials
 
-  # `api_key`(required)   = The Zoom API key provided by JWT OAuth app.
+  # `api_key`(required) - The Zoom API key provided by JWT OAuth app.
   # Can also be set with the ZOOM_API_KEY environment variable.
-  # api_key    = "LFMU3oagTjO8_5sYKQVe"
+  # api_key = "LFMU3oagTjO8_5sYKQVe"
 
-  # `api_secret`(required) = The Zoom API secret provided by JWT OAuth app.
+  # `api_secret`(required) - The Zoom API secret provided by JWT OAuth app.
   # Can also be set with the ZOOM_API_SECRET environment variable.
   # api_secret = "PKS96L69nWSFK2y0A07R2k7xGryVbcWiem"
+
+  # If you define Server-to-Server and JWT, then the plugin prioritizes Server-to-Server creds.
 }
 

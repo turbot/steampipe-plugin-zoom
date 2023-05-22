@@ -51,12 +51,12 @@ steampipe plugin install zoom
 
 ### Credentials
 
-| Item        | Description                                                                                                                                                                                                                                                  |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Credentials | [Create a Server-to-Server OAuth app](https://developers.zoom.us/docs/internal-apps/create/) to get the Account ID, Client ID and Client Secret or [create an SDK App](https://marketplace.zoom.us/docs/guides/build/sdk-app) to get the API key and secret. |
-| Permissions | Server-to-Server OAuth apps or SDK / JWT apps can access all Zoom APIs.                                                                                                                                                                                      |
-| Radius      | Each connection represents a single Zoom account.                                                                                                                                                                                                            |
-| Resolution  | 1. Credentials explicitly set in a steampipe config file (`~/.steampipe/config/zoom.spc`)<br />2. Credentials specified in environment variables, e.g., `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID` and `ZOOM_CLIENT_SECRET`.                                        |
+| Item        | Description                                                                                                                                                                                                           |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Credentials | [Create a Server-to-Server OAuth app](https://developers.zoom.us/docs/internal-apps/create/) to get the Account ID, Client ID and Client Secret.                                                                      |
+| Permissions | Server-to-Server OAuth apps or SDK / JWT apps can access all Zoom APIs.                                                                                                                                               |
+| Radius      | Each connection represents a single Zoom account.                                                                                                                                                                     |
+| Resolution  | 1. Credentials explicitly set in a steampipe config file (`~/.steampipe/config/zoom.spc`)<br />2. Credentials specified in environment variables, e.g., `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID` and `ZOOM_CLIENT_SECRET`. |
 
 ### Configuration
 
@@ -76,31 +76,35 @@ connection "zoom" {
 
   # `account_id`(required) - The Zoom account ID.
   # Can also be set with the ZOOM_ACCOUNT_ID environment variable.
-  # account_id    = "Xt1aUD4WQ56w7hDhVbtDp"
+  # account_id = "Xt1aUD4WQ56w7hDhVbtDp"
 
   # `client_id`(required) - The Zoom Client ID provided by Server-to-Server OAuth app.
   # Can also be set with the ZOOM_CLIENT_ID environment variable.
-  # client_id    = "MZw2piRfTsOdpwx2Dh5U"
+  # client_id = "MZw2piRfTsOdpwx2Dh5U"
 
   # `client_secret`(required) - The Zoom Client Secret provided by Server-to-Server OAuth app.
   # Can also be set with the ZOOM_CLIENT_SECRET environment variable.
-  # client_secret    = "04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
+  # client_secret = "04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
 
   ## SDK/JWT app credentials
 
-  # `api_key`(required)   = The Zoom API key provided by SDK/JWT OAuth app.
+  # `api_key`(required) - The Zoom API key provided by SDK/JWT OAuth app.
   # Can also be set with the ZOOM_API_KEY environment variable.
-  # api_key    = "LFMU3oagTjO8_5sYKQVe"
+  # api_key = "LFMU3oagTjO8_5sYKQVe"
 
-  # `api_secret`(required) = The Zoom API secret provided by SDK/JWT OAuth app.
+  # `api_secret`(required) - The Zoom API secret provided by SDK/JWT OAuth app.
   # Can also be set with the ZOOM_API_SECRET environment variable.
   # api_secret = "PKS96L69nWSFK2y0A07R2k7xGryVbcWiem"
+
+  # If you define Server-to-Server and JWT, then the plugin prioritizes Server-to-Server creds.
 }
 ```
 
 ## Configuring Zoom Credentials
 
-You may specify the AccountID, ClientID and ClientSecret to authenticate:
+### Server-to-Server OAuth Application
+
+You may specify the account ID, client ID, and client secret to authenticate:
 
 - `account_id`: The Zoom account ID.
 - `client_id`: The Zoom Client ID provided by Server-to-Server OAuth app.
@@ -115,7 +119,11 @@ connection "zoom" {
 }
 ```
 
-or you may specify the APIKey and APISecret to authenticate:
+### JWT Application
+
+Note: JWT applications are deprecated as of June 1, 2023 and will be entirely disabled on September 1, 2023. We recommend migrating to Server-to-Server OAuth applications.
+
+You may specify the API key and API secret:
 
 - `api_key`: The Zoom API key provided by SDK/JWT OAuth app.
 - `api_secret`: The Zoom API secret provided by SDK/JWT OAuth app.
@@ -130,7 +138,7 @@ connection "zoom" {
 
 or through environment variables
 
-The Zoom plugin will use the Zoom environment variable to obtain credentials **only if the `account_id`,`client_id`, and`client_secret` or `api_key` and `api_secret` is not specified** in the connection:
+The Zoom plugin will use the Zoom environment variable to obtain credentials **only if the `account_id`, `client_id`, and `client_secret` or `api_key` and `api_secret` arguments are not specified** in the connection:
 
 ```sh
 export ZOOM_ACCOUNT_ID="Xt1aUD4WQ56w7hDhVbtDp"

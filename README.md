@@ -21,7 +21,9 @@ Configure your [credentials](https://hub.steampipe.io/plugins/turbot/zoom#creden
 
 ## Configuring Zoom Credentials
 
-You may specify the AccountID, ClientID and ClientSecret to authenticate:
+### Server-to-Server OAuth Application
+
+You may specify the account ID, client ID, and client secret to authenticate:
 
 - `account_id`: The Zoom account ID.
 - `client_id`: The Zoom Client ID provided by Server-to-Server OAuth app.
@@ -36,7 +38,11 @@ connection "zoom" {
 }
 ```
 
-or you may specify the APIKey and APISecret to authenticate:
+### JWT Application
+
+Note: JWT applications are deprecated as of June 1, 2023 and will be entirely disabled on September 1, 2023. We recommend migrating to Server-to-Server OAuth applications.
+
+You may specify the API key and API secret:
 
 - `api_key`: The Zoom API key provided by SDK/JWT OAuth app.
 - `api_secret`: The Zoom API secret provided by SDK/JWT OAuth app.
@@ -51,7 +57,7 @@ connection "zoom" {
 
 or through environment variables
 
-The Zoom plugin will use the Zoom environment variable to obtain credentials **only if the `account_id`,`client_id`, and`client_secret` or `api_key` and `api_secret` is not specified** in the connection:
+The Zoom plugin will use the Zoom environment variable to obtain credentials **only if the `account_id`, `client_id`, and `client_secret` or `api_key` and `api_secret` arguments are not specified** in the connection:
 
 ```sh
 export ZOOM_ACCOUNT_ID="Xt1aUD4WQ56w7hDhVbtDp"
