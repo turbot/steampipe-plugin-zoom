@@ -39,17 +39,16 @@ func getAccountID(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 var getAccountIDCached = plugin.HydrateFunc(getAccountIDUncached).Memoize()
 
 func getAccountIDUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	zoomConfig := GetConfig(d.Connection)
 	var accountID string
+	conn, err := connect(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("zoom_user.getAccountIDUncached", "connection_error", err)
+		return nil, err
+	}
 
-	if zoomConfig.AccountID != nil {
-		accountID = *zoomConfig.AccountID
+	if conn.AccountID != "" {
+		accountID = conn.AccountID
 	} else {
-		conn, err := connect(ctx, d)
-		if err != nil {
-			plugin.Logger(ctx).Error("zoom_user.getAccountIDUncached", "connection_error", err)
-			return nil, err
-		}
 		opts := zoom.GetUserOpts{
 			EmailOrID: "me",
 		}
