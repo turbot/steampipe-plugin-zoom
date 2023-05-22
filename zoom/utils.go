@@ -51,7 +51,7 @@ func connectUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	if accountID == "" || clientID == "" || clientSecret == "" {
 		if apiKey == "" || apiSecret == "" {
 			// Credentials not set
-			return nil, errors.New("server-to-server oauth app or jwt app credentials must be configured")
+			return nil, errors.New("Server-to-Server oauth app or JWT app credentials must be configured")
 		}
 	}
 
