@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.4.1
-	github.com/turbot/zoom-lib-golang v1.0.0
+	github.com/turbot/zoom-lib-golang v1.1.0
 )
 
 require (
