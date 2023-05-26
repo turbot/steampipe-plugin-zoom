@@ -48,11 +48,9 @@ func connectUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		clientSecret = *zoomConfig.ClientSecret
 	}
 
-	if accountID == "" || clientID == "" || clientSecret == "" {
-		if apiKey == "" || apiSecret == "" {
-			// Credentials not set
-			return nil, errors.New("Server-to-Server oauth app or JWT app credentials must be configured")
-		}
+	if (accountID == "" || clientID == "" || clientSecret == "") && (apiKey == "" || apiSecret == "") {
+		// Credentials not set
+		return nil, errors.New("Server-to-Server oauth app or JWT app credentials must be configured")
 	}
 
 	// prefer server-to-server oauth app creds
