@@ -54,9 +54,9 @@ steampipe plugin install zoom
 | Item        | Description                                                                                                                                                                                                           |
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Credentials | [Create a Server-to-Server OAuth app](https://developers.zoom.us/docs/internal-apps/create/) to get the Account ID, Client ID and Client Secret.                                                                      |
-| Permissions | Server-to-Server OAuth apps or SDK / JWT apps can access all Zoom APIs.                                                                                                                                               |
+| Permissions | The permission scope of Server-to-Server OAuth apps or SDK / JWT apps is set by the Admin at the creation time of the apps.                                                                                           |
 | Radius      | Each connection represents a single Zoom account.                                                                                                                                                                     |
-| Resolution  | 1. Credentials explicitly set in a steampipe config file (`~/.steampipe/config/zoom.spc`)<br />2. Credentials specified in environment variables, e.g., `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID` and `ZOOM_CLIENT_SECRET`. |
+| Resolution  | 1. Credentials explicitly set in a Steampipe config file (`~/.steampipe/config/zoom.spc`)<br />2. Credentials specified in environment variables, e.g., `ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID` and `ZOOM_CLIENT_SECRET`. |
 
 ### Configuration
 
@@ -72,7 +72,7 @@ connection "zoom" {
   # You need to create a Server-to-Server OAuth app(https://developers.zoom.us/docs/internal-apps/create) or a SDK/JWT APP (https://marketplace.zoom.us/docs/guides/build/sdk-app)to get the credentials.
   # It is recommended that you create Server-to-Server OAuth as JWT app is deprecated On June 1, 2023 and will be disabled on September 1, 2023. https://developers.zoom.us/docs/internal-apps/jwt-faq/
 
-  ## Server-to-Server OAuth app credentials
+  # Server-to-Server OAuth app credentials
 
   # `account_id`(required) - The Zoom account ID.
   # Can also be set with the ZOOM_ACCOUNT_ID environment variable.
@@ -86,7 +86,7 @@ connection "zoom" {
   # Can also be set with the ZOOM_CLIENT_SECRET environment variable.
   # client_secret = "04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
 
-  ## SDK/JWT app credentials
+  # SDK/JWT app credentials
 
   # `api_key`(required) - The Zoom API key provided by SDK/JWT OAuth app.
   # Can also be set with the ZOOM_API_KEY environment variable.

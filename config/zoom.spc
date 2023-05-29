@@ -5,7 +5,7 @@ connection "zoom" {
   # If both auth methods are specified, the Server-to-Server OAuth app credentials will be used.
   # We recommend creating a Server-to-Server OAuth app as JWT apps are being deprecated on June 1, 2023 and will be disabled on September 1, 2023 (https://developers.zoom.us/docs/internal-apps/jwt-faq/).
 
-  ## Server-to-Server OAuth app credentials (https://developers.zoom.us/docs/internal-apps/create/)
+  # Server-to-Server OAuth app credentials (https://developers.zoom.us/docs/internal-apps/create/)
 
   # `account_id` (required) - The Zoom account ID.
   # Can also be set with the ZOOM_ACCOUNT_ID environment variable.
@@ -19,7 +19,7 @@ connection "zoom" {
   # Can also be set with the ZOOM_CLIENT_SECRET environment variable.
   # client_secret = "04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
 
-  ## JWT app credentials (https://developers.zoom.us/docs/platform/build/jwt-app/)
+  # JWT app credentials (https://developers.zoom.us/docs/platform/build/jwt-app/)
 
   # `api_key` (required) - The Zoom API key provided by JWT OAuth app.
   # Can also be set with the ZOOM_API_KEY environment variable.

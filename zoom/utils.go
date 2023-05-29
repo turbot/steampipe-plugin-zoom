@@ -54,7 +54,7 @@ func connectUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	}
 
 	// prefer server-to-server oauth app creds
-	if accountID != "" || clientID != "" || clientSecret != "" {
+	if accountID != "" && clientID != "" && clientSecret != "" {
 		conn := zoom.NewClient("", "", accountID, clientID, clientSecret)
 		return conn, nil
 	} else {
