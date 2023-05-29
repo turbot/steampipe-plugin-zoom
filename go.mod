@@ -4,12 +4,13 @@ go 1.19
 
 require (
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.4.1
-	github.com/turbot/zoom-lib-golang v1.1.0
+	github.com/turbot/zoom-lib-golang v1.4.0
 )
 
 require (
 	cloud.google.com/go v0.65.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
+	github.com/Code-Hex/go-generics-cache v1.3.1 // indirect
 	github.com/XiaoMi/pegasus-go-client v0.0.0-20210427083443-f3b6b08bc4c2 // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
