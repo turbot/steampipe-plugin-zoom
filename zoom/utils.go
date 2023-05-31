@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"os"
+	"time"
 
 	"github.com/turbot/zoom-lib-golang"
 
+	"github.com/turbot/steampipe-plugin-sdk/v5/memoize"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
@@ -20,9 +22,10 @@ func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
 	return conn.(*zoom.Client), nil
 }
 
-var connectCached = plugin.HydrateFunc(connectUncached).Memoize()
+// This cache has a 30 day expiration! The Zoom SDK will automatically refresh the token as needed
+var connectCached = plugin.HydrateFunc(connectUncached).Memoize(memoize.WithTtl(time.Hour * 24 * 30))
 
-func connectUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
+func connectUncached(_ context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
 	// Default to using env vars (#2)
 	apiKey := os.Getenv("ZOOM_API_KEY")
 	apiSecret := os.Getenv("ZOOM_API_SECRET")
