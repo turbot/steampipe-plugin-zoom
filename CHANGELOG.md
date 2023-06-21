@@ -1,3 +1,13 @@
+## v0.8.0 [2023-06-21]
+
+_What's new?_
+
+- Added support for [Server-to-Server OAuth](https://developers.zoom.us/docs/internal-apps/s2s-oauth/#enable-the-server-to-server-oauth-role) authentication mechanism. Please refer the [Configuration](https://hub.steampipe.io/plugins/turbot/zoom#configuration) section for additional information. ([#35](https://github.com/turbot/steampipe-plugin-zoom/pull/35))
+
+_Dependencies_
+
+- Recompiled plugin with [steampipe-plugin-sdk v5.5.0](https://github.com/turbot/steampipe-plugin-sdk/blob/v5.5.0/CHANGELOG.md#v550-2023-06-16) which significantly reduces API calls and boosts query performance, resulting in faster data retrieval. ([#36](https://github.com/turbot/steampipe-plugin-zoom/pull/36))
+
 ## v0.7.0 [2023-05-11]
 
 _Dependencies_
