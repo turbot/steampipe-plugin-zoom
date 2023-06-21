@@ -6,15 +6,27 @@ import (
 )
 
 type zoomConfig struct {
-	APIKey    *string `cty:"api_key"`
-	APISecret *string `cty:"api_secret"`
+	AccountID    *string `cty:"account_id"`
+	APIKey       *string `cty:"api_key"`
+	APISecret    *string `cty:"api_secret"`
+	ClientID     *string `cty:"client_id"`
+	ClientSecret *string `cty:"client_secret"`
 }
 
 var ConfigSchema = map[string]*schema.Attribute{
+	"account_id": {
+		Type: schema.TypeString,
+	},
 	"api_key": {
 		Type: schema.TypeString,
 	},
 	"api_secret": {
+		Type: schema.TypeString,
+	},
+	"client_id": {
+		Type: schema.TypeString,
+	},
+	"client_secret": {
 		Type: schema.TypeString,
 	},
 }

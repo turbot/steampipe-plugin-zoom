@@ -3,7 +3,7 @@ package zoom
 import (
 	"context"
 
-	"github.com/himalayan-institute/zoom-lib-golang"
+	"github.com/turbot/zoom-lib-golang"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -118,4 +118,3 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	}
 	return result, nil
 }
-

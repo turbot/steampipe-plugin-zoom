@@ -3,7 +3,7 @@ package zoom
 import (
 	"context"
 
-	"github.com/himalayan-institute/zoom-lib-golang"
+	"github.com/turbot/zoom-lib-golang"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -19,8 +19,8 @@ func tableZoomMeeting(ctx context.Context) *plugin.Table {
 			KeyColumns: plugin.SingleColumn("user_id"),
 		},
 		Get: &plugin.GetConfig{
-			Hydrate:    	getMeeting,
-			KeyColumns: 	plugin.SingleColumn("id"),
+			Hydrate:        getMeeting,
+			KeyColumns:     plugin.SingleColumn("id"),
 			MaxConcurrency: 5,
 		},
 		Columns: zoomAccountColumns([]*plugin.Column{
