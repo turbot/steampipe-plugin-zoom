@@ -4,24 +4,34 @@ import (
 	"context"
 	"errors"
 	"os"
+	"time"
 
-	"github.com/himalayan-institute/zoom-lib-golang"
+	"github.com/turbot/zoom-lib-golang"
 
+	"github.com/turbot/steampipe-plugin-sdk/v5/memoize"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
-
-	// Load connection from cache, which preserves throttling protection etc
-	cacheKey := "zoom"
-	if cachedData, ok := d.ConnectionManager.Cache.Get(cacheKey); ok {
-		return cachedData.(*zoom.Client), nil
+	conn, err := connectCached(ctx, d, nil)
+	if err != nil {
+		return nil, err
 	}
 
+	return conn.(*zoom.Client), nil
+}
+
+// This cache has a 30 day expiration! The Zoom SDK will automatically refresh the token as needed
+var connectCached = plugin.HydrateFunc(connectUncached).Memoize(memoize.WithTtl(time.Hour * 24 * 30))
+
+func connectUncached(_ context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
 	// Default to using env vars (#2)
 	apiKey := os.Getenv("ZOOM_API_KEY")
 	apiSecret := os.Getenv("ZOOM_API_SECRET")
+	accountID := os.Getenv("ZOOM_ACCOUNT_ID")
+	clientID := os.Getenv("ZOOM_CLIENT_ID")
+	clientSecret := os.Getenv("ZOOM_CLIENT_SECRET")
 
 	// But prefer the config (#1)
 	zoomConfig := GetConfig(d.Connection)
@@ -31,19 +41,29 @@ func connect(ctx context.Context, d *plugin.QueryData) (*zoom.Client, error) {
 	if zoomConfig.APISecret != nil {
 		apiSecret = *zoomConfig.APISecret
 	}
-
-	if apiKey == "" || apiSecret == "" {
-		// Credentials not set
-		return nil, errors.New("api_key and api_secret must be configured")
+	if zoomConfig.AccountID != nil {
+		accountID = *zoomConfig.AccountID
+	}
+	if zoomConfig.ClientID != nil {
+		clientID = *zoomConfig.ClientID
+	}
+	if zoomConfig.ClientSecret != nil {
+		clientSecret = *zoomConfig.ClientSecret
 	}
 
-	// Configure to automatically wait 1 sec between requests, per Zoom API requirements
-	conn := zoom.NewClient(apiKey, apiSecret)
+	if (accountID == "" || clientID == "" || clientSecret == "") && (apiKey == "" || apiSecret == "") {
+		// Credentials not set
+		return nil, errors.New("Server-to-Server oauth app or JWT app credentials must be configured")
+	}
 
-	// Save to cache
-	d.ConnectionManager.Cache.Set(cacheKey, conn)
-
-	return conn, nil
+	// prefer server-to-server oauth app creds
+	if accountID != "" && clientID != "" && clientSecret != "" {
+		conn := zoom.NewClient("", "", accountID, clientID, clientSecret)
+		return conn, nil
+	} else {
+		conn := zoom.NewClient(apiKey, apiSecret, "", "", "")
+		return conn, nil
+	}
 }
 
 func timeToTimestamp(_ context.Context, d *transform.TransformData) (interface{}, error) {

@@ -3,9 +3,10 @@ package zoom
 import (
 	"context"
 
-	"github.com/himalayan-institute/zoom-lib-golang"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	"github.com/turbot/zoom-lib-golang"
 )
 
 // Append the standard zoom account columns used by many tables
@@ -21,50 +22,43 @@ func commonZoomAccountColumns() []*plugin.Column {
 			Type:        proto.ColumnType_STRING,
 			Hydrate:     getAccountID,
 			Description: "Zoom account ID.",
+			Transform:   transform.FromValue(),
 		},
 	}
 }
 
-type zoomAccountID struct {
-	AccountID string
+func getAccountID(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	conn, err := getAccountIDCached(ctx, d, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn.(string), nil
 }
 
-func getAccountID(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+var getAccountIDCached = plugin.HydrateFunc(getAccountIDUncached).Memoize()
 
-	// This is called a lot and never changes for a connection, so cache it
-	cacheKey := "zoom_account_id"
-	if cachedData, ok := d.ConnectionManager.Cache.Get(cacheKey); ok {
-		plugin.Logger(ctx).Warn("zoom_user.getAccountID", "cache", "hit!")
-		return cachedData.(zoomAccountID), nil
-	}
-
-	plugin.Logger(ctx).Warn("zoom_user.getAccountID", "cache", "miss!")
-
+func getAccountIDUncached(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+	var accountID string
 	conn, err := connect(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("zoom_user.getAccountID", "connection_error", err)
-		return nil, err
-	}
-	opts := zoom.GetUserOpts{
-		EmailOrID: "me",
-	}
-	user, err := conn.GetUser(opts)
-	if err != nil {
-		plugin.Logger(ctx).Error("zoom_user.getAccountID", "query_error", err, "opts", opts)
+		plugin.Logger(ctx).Error("zoom_user.getAccountIDUncached", "connection_error", err)
 		return nil, err
 	}
 
-	result := zoomAccountID{
-		AccountID: user.AccountID,
+	if conn.AccountID != "" {
+		accountID = conn.AccountID
+	} else {
+		opts := zoom.GetUserOpts{
+			EmailOrID: "me",
+		}
+		user, err := conn.GetUser(opts)
+		if err != nil {
+			plugin.Logger(ctx).Error("zoom_user.getAccountIDUncached", "query_error", err, "opts", opts)
+			return nil, err
+		}
+		accountID = user.AccountID
 	}
 
-	plugin.Logger(ctx).Warn("zoom_user.getAccountID", "cache", "set!")
-
-	// Save to cache
-	setResult := d.ConnectionManager.Cache.Set(cacheKey, result)
-
-	plugin.Logger(ctx).Warn("zoom_user.getAccountID", "setResult", setResult)
-	plugin.Logger(ctx).Warn("zoom_user.getAccountID", "result", result)
-
-	return result, nil
+	return accountID, nil
 }

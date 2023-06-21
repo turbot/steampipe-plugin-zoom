@@ -3,7 +3,7 @@ package zoom
 import (
 	"log"
 
-	"github.com/himalayan-institute/zoom-lib-golang"
+	"github.com/turbot/zoom-lib-golang"
 )
 
 func shouldRetryError(err error) bool {

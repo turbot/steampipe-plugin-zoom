@@ -2,11 +2,9 @@ module github.com/turbot/steampipe-plugin-zoom
 
 go 1.19
 
-replace github.com/himalayan-institute/zoom-lib-golang => github.com/e-gineer/zoom-lib-golang v1.0.1-0.20210430204608-85977a1550a0
-
 require (
-	github.com/himalayan-institute/zoom-lib-golang v1.0.0
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.5.0
+	github.com/turbot/zoom-lib-golang v1.4.0
 )
 
 require (
@@ -14,6 +12,7 @@ require (
 	cloud.google.com/go/compute v1.10.0 // indirect
 	cloud.google.com/go/iam v0.5.0 // indirect
 	cloud.google.com/go/storage v1.27.0 // indirect
+	github.com/Code-Hex/go-generics-cache v1.3.1 // indirect
 	github.com/XiaoMi/pegasus-go-client v0.0.0-20210427083443-f3b6b08bc4c2 // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
@@ -42,7 +41,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.6.0 // indirect
