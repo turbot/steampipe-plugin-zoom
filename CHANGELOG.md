@@ -1,4 +1,8 @@
-## v0.8.0 [2023-06-20]
+## v0.8.0 [2023-06-21]
+
+_What's new?_
+
+- Added support for [Server-to-Server OAuth](https://developers.zoom.us/docs/internal-apps/s2s-oauth/#enable-the-server-to-server-oauth-role) authentication mechanism. Please refer the [Configuration](https://hub.steampipe.io/plugins/turbot/zoom#configuration) section for additional information. ([#35](https://github.com/turbot/steampipe-plugin-zoom/pull/35))
 
 _Dependencies_
 
