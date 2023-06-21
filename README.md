@@ -11,6 +11,8 @@ Use SQL to query infrastructure including servers, networks, facilities and more
 
 ## Quick start
 
+### Install
+
 Download and install the latest Zoom plugin:
 
 ```bash
@@ -19,15 +21,9 @@ steampipe plugin install zoom
 
 Configure your [credentials](https://hub.steampipe.io/plugins/turbot/zoom#credentials) and [config file](https://hub.steampipe.io/plugins/turbot/zoom#configuration).
 
-## Configuring Zoom Credentials
-
-### Server-to-Server OAuth Application
+Configure your account details in `~/.steampipe/config/zoom.spc`:
 
 You may specify the account ID, client ID, and client secret to authenticate:
-
-- `account_id`: The Zoom account ID.
-- `client_id`: The Zoom Client ID provided by Server-to-Server OAuth app.
-- `client_secret`: The Zoom Client Secret provided by Server-to-Server OAuth app.
 
 ```hcl
 connection "zoom" {
@@ -38,33 +34,20 @@ connection "zoom" {
 }
 ```
 
-### JWT Application
-
-Note: JWT applications are deprecated as of June 1, 2023 and will be entirely disabled on September 1, 2023. We recommend migrating to Server-to-Server OAuth applications.
-
-You may specify the API key and API secret:
-
-- `api_key`: The Zoom API key provided by SDK/JWT OAuth app.
-- `api_secret`: The Zoom API secret provided by SDK/JWT OAuth app.
-
-```hcl
-connection "zoom" {
-  plugin     = "zoom"
-  api_key    = "9m_kAcfuTlW_JCrvoMYK6g"
-  api_secret = "lEEDVf3SgyQWckN3ASqMpXWpCixkwMzgnZY7"
-}
-```
-
-or through environment variables
-
-The Zoom plugin will use the Zoom environment variable to obtain credentials **only if the `account_id`, `client_id`, and `client_secret` or `api_key` and `api_secret` arguments are not specified** in the connection:
+Or through environment variables:
 
 ```sh
 export ZOOM_ACCOUNT_ID="Xt1aUD4WQ56w7hDhVbtDp"
 export ZOOM_CLIENT_ID="MZw2piRfTsOdpwx2Dh5U"
 export ZOOM_CLIENT_SECRET="04tKwHgFGvwB1M4HPHOBFP0aLHYqUE"
-export ZOOM_API_KEY="9m_kAcfuTlW_JCrvoMYK6g"
-export ZOOM_API_SECRET="lEEDVf3SgyQWckN3ASqMpXWpCixkwMzgnZY7"
+```
+
+You may also use the deprecated [JWT App](https://hub.steampipe.io/plugins/turbot/zoom#jwt-application) mode of authentication.
+
+Run steampipe:
+
+```shell
+steampipe query
 ```
 
 List your Zoom users:
