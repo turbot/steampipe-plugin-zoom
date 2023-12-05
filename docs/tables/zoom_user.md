@@ -16,54 +16,89 @@ The `zoom_user` table provides insights into user management within Zoom. As an 
 ### List all users
 Explore all registered users within your Zoom account to ensure proper management and oversight. This can be particularly useful for administrators seeking a comprehensive overview of all account users.
 
-```sql
+```sql+postgres
 select
   *
 from
-  zoom_user
+  zoom_user;
+```
+
+```sql+sqlite
+select
+  *
+from
+  zoom_user;
 ```
 
 ### Get a user by ID
 Explore the details of a specific user in the Zoom platform. This is particularly useful when you need to assess user-related issues or understand their activity within the system.
 
-```sql
+```sql+postgres
 select
   *
 from
   zoom_user
 where
-  id = 'RCKlotFLRpe-Hbnv-VK3CA'
+  id = 'RCKlotFLRpe-Hbnv-VK3CA';
+```
+
+```sql+sqlite
+select
+  *
+from
+  zoom_user
+where
+  id = 'RCKlotFLRpe-Hbnv-VK3CA';
 ```
 
 ### Get a user by email
 Discover the details of a specific user in your Zoom account by using their email address. This can be particularly useful for administrators who need to manage or track user activities.
 
-```sql
+```sql+postgres
 select
   *
 from
   zoom_user
 where
-  email = 'dwight@dundermifflin.com'
+  email = 'dwight@dundermifflin.com';
+```
+
+```sql+sqlite
+select
+  *
+from
+  zoom_user
+where
+  email = 'dwight@dundermifflin.com';
 ```
 
 ### Most recently created users
 Discover the most recent additions to your Zoom user base. This query helps you keep track of new users, allowing for timely onboarding and account management.
 
-```sql
+```sql+postgres
 select
   *
 from
   zoom_user
 order by
   created_at desc
-limit 5
+limit 5;
+```
+
+```sql+sqlite
+select
+  *
+from
+  zoom_user
+order by
+  created_at desc
+limit 5;
 ```
 
 ### Users by license type
 Discover the segments that are most common among Zoom users based on their license type. This can help prioritize resources and tailor services for the most prevalent user categories.
 
-```sql
+```sql+postgres
 select
   type,
   count(*)
@@ -72,17 +107,38 @@ from
 group by
   type
 order by
-  count desc
+  count desc;
+```
+
+```sql+sqlite
+select
+  type,
+  count(*)
+from
+  zoom_user
+group by
+  type
+order by
+  count(*) desc;
 ```
 
 ### Users with Security:Edit permission
 Explore which Zoom users have the ability to edit security settings, a useful query for managing access control and maintaining security protocols within your organization.
 
-```sql
+```sql+postgres
 select
   *
 from
   zoom_user
 where
-  permissions ? 'Security:Edit'
+  permissions ? 'Security:Edit';
+```
+
+```sql+sqlite
+select
+  *
+from
+  zoom_user
+where
+  json_extract(permissions, '$.Security:Edit') is not null;
 ```

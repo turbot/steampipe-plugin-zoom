@@ -16,9 +16,16 @@ The `zoom_my_user` table provides insights into user profiles within Zoom. As a 
 ### List user information
 Explore the details of all user profiles within your Zoom account. This can help in managing users and understanding the overall utilization of your Zoom resources.
 
-```sql
+```sql+postgres
 select
   *
 from
-  zoom_my_user
+  zoom_my_user;
+```
+
+```sql+sqlite
+select
+  *
+from
+  zoom_my_user;
 ```

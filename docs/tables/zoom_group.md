@@ -16,7 +16,16 @@ The `zoom_group` table provides insights into Zoom Groups within the Zoom video 
 ### List all groups
 Identify instances where you need to analyze all groups within your Zoom account, sorted by their names. This can provide a comprehensive overview of all groups, beneficial for administrative tasks and group management.
 
-```sql
+```sql+postgres
+select
+  *
+from
+  zoom_group
+order by
+  name
+```
+
+```sql+sqlite
 select
   *
 from
@@ -28,7 +37,16 @@ order by
 ### Get a group by ID
 Explore the specific group details in the Zoom application by using a unique identifier. This can be particularly useful in managing and organizing large numbers of groups.
 
-```sql
+```sql+postgres
+select
+  *
+from
+  zoom_group
+where
+  id = 'siPuH6LvQfKSkeaVyxZCRQ'
+```
+
+```sql+sqlite
 select
   *
 from
@@ -40,7 +58,16 @@ where
 ### Groups with no members (to clean up?)
 Discover the segments that consist of Zoom groups with no members, to determine areas that may require cleanup or removal. This helps streamline group management and optimise resource allocation.
 
-```sql
+```sql+postgres
+select
+  *
+from
+  zoom_group
+where
+  total_members = 0
+```
+
+```sql+sqlite
 select
   *
 from

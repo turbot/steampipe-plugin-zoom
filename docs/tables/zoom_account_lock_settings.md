@@ -18,7 +18,7 @@ Explore the security settings of your account to understand how your meetings, r
 If true, then the setting is locked to the account level setting.
 
 
-```sql
+```sql+postgres
 select
   jsonb_pretty(email_notification) as email_notification,
   jsonb_pretty(in_meeting) as in_meeting,
@@ -28,16 +28,36 @@ select
   jsonb_pretty(telephony) as telephony,
   jsonb_pretty(tsp) as tsp
 from
-  zoom_account_lock_settings
+  zoom_account_lock_settings;
+```
+
+```sql+sqlite
+select
+  email_notification,
+  in_meeting,
+  meeting_security,
+  recording,
+  schedule_meeting,
+  telephony,
+  tsp
+from
+  zoom_account_lock_settings;
 ```
 
 ### Ensure join before host is set to disabled (CIS v1.1.2.4)
 Explore which Zoom meeting settings allow participants to join before the host, to ensure compliance with the CIS v1.1.2.4 standard. This can help improve meeting security by preventing unauthorized access.
 Ensure the setting is locked at account level:
 
-```sql
+```sql+postgres
 select
   schedule_meeting ->> 'join_before_host'
 from
-  zoom_account_lock_settings
+  zoom_account_lock_settings;
+```
+
+```sql+sqlite
+select
+  json_extract(schedule_meeting, '$.join_before_host')
+from
+  zoom_account_lock_settings;
 ```
