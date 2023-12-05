@@ -121,24 +121,3 @@ group by
 order by
   count(*) desc;
 ```
-
-### Users with Security:Edit permission
-Explore which Zoom users have the ability to edit security settings, a useful query for managing access control and maintaining security protocols within your organization.
-
-```sql+postgres
-select
-  *
-from
-  zoom_user
-where
-  permissions ? 'Security:Edit';
-```
-
-```sql+sqlite
-select
-  *
-from
-  zoom_user
-where
-  json_extract(permissions, '$.Security:Edit') is not null;
-```
