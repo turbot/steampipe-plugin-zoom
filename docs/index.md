@@ -152,7 +152,4 @@ export ZOOM_API_KEY="9m_kAcfuTlW_JCrvoMYK6g"
 export ZOOM_API_SECRET="lEEDVf3SgyQWckN3ASqMpXWpCixkwMzgnZY7"
 ```
 
-## Get involved
 
-- Open source: https://github.com/turbot/steampipe-plugin-zoom
-- Community: [Discussion forums](https://github.com/turbot/steampipe/discussions)
