@@ -8,6 +8,7 @@ name: zoom
 description: Steampipe plugin for querying Zoom meetings, webinars, users and more.
 og_description: Query Zoom with SQL! Open source CLI. No DB required.
 og_image: "/images/plugins/turbot/zoom-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # Zoom + Steampipe
