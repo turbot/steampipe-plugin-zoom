@@ -8,11 +8,12 @@ name: zoom
 description: Steampipe plugin for querying Zoom meetings, webinars, users and more.
 og_description: Query Zoom with SQL! Open source CLI. No DB required.
 og_image: "/images/plugins/turbot/zoom-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # Zoom + Steampipe
 
-[Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
+[Steampipe](https://steampipe.io) is an open-source zero-ETL engine to instantly query cloud APIs using SQL.
 
 [Zoom](https://zoom.us) provides videotelephony and online chat services through a cloud-based peer-to-peer software platform and is used for teleconferencing, telecommuting, distance education, and social relations.
 
@@ -151,7 +152,4 @@ export ZOOM_API_KEY="9m_kAcfuTlW_JCrvoMYK6g"
 export ZOOM_API_SECRET="lEEDVf3SgyQWckN3ASqMpXWpCixkwMzgnZY7"
 ```
 
-## Get involved
 
-- Open source: https://github.com/turbot/steampipe-plugin-zoom
-- Community: [Discussion forums](https://github.com/turbot/steampipe/discussions)
