@@ -75,7 +75,7 @@ connection "zoom" {
 
   # Server-to-Server OAuth app credentials
 
-  # Zoom account ID is required for requests. Required. 
+  # Zoom account ID is required for requests. Required.
   # This can also be set via the ZOOM_ACCOUNT_ID environment variable.
   # account_id = "Xt1aUD4WQ56w7hDhVbtDp"
 
@@ -100,6 +100,19 @@ connection "zoom" {
   # If you define Server-to-Server and JWT, then the plugin prioritizes Server-to-Server creds.
 }
 ```
+
+The following scopes must be enabled for Steampipe to be able to access the Zoom tables:
+
+- user:read:list_users:admin
+- user:read:user:admin
+- role:read:list_roles:admin
+- role:read:list_members:admin
+- meeting:read:list_meetings:admin
+- group:read:list_groups:admin
+- group:read:list_members:admin
+- cloud_recording:read:list_user_recordings:admin
+- account:read:settings:admin
+- account:read:lock_settings:admin
 
 ## Configuring Zoom Credentials
 
