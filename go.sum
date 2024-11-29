@@ -566,8 +566,8 @@ github.com/turbot/go-kit v0.10.0-rc.0 h1:kd+jp2ibbIV33Hc8SsMAN410Dl9Pz6SJ40axbKU
 github.com/turbot/go-kit v0.10.0-rc.0/go.mod h1:fFQqR59I5z5JeeBLfK1PjSifn4Oprs3NiQx0CxeSJxs=
 github.com/turbot/steampipe-plugin-sdk/v5 v5.10.4 h1:h2Ye0ksL6KN6w2wh1O3mgKthLnyl4QPsTpUj47bRbvc=
 github.com/turbot/steampipe-plugin-sdk/v5 v5.10.4/go.mod h1:FzW+0aq4x1PoCkklCRx43dMrhxk7SYeWVHUb3pNFtFc=
-github.com/turbot/zoom-lib-golang v1.4.0 h1:IR7ECBw1uIerreozwfiulkWldJVK1/65UIIq1djVQZA=
-github.com/turbot/zoom-lib-golang v1.4.0/go.mod h1:ai41bJ7Ux7C0bwbrjynCOvSOBQnT9X58Dy39lfdN17A=
+github.com/turbot/zoom-lib-golang v1.4.1 h1:5yb7u4C9gMKXeZNxE0WGE0mjyezUgNCWFtOeIJmgaHw=
+github.com/turbot/zoom-lib-golang v1.4.1/go.mod h1:ai41bJ7Ux7C0bwbrjynCOvSOBQnT9X58Dy39lfdN17A=
 github.com/ulikunitz/xz v0.5.10 h1:t92gobL9l3HE202wg3rlk19F6X+JOxl9BBrCCMYEYd8=
 github.com/ulikunitz/xz v0.5.10/go.mod h1:nbz6k7qbPmH4IRqmfOplQw/tblSgqTqBwxkY0oWt/14=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

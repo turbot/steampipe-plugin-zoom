@@ -167,7 +167,7 @@ func getAccountManagedDomains(ctx context.Context, d *plugin.QueryData, h *plugi
 	}
 	// Always return an array
 	if result.Domains == nil {
-		result.Domains = []string{}
+		result.Domains = []zoom.Domain{}
 	}
 	return result, nil
 }
