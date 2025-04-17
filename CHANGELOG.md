@@ -1,5 +1,9 @@
 ## v1.1.0 [2025-04-17]
 
+_Bug fixes_
+
+- Fixed the `zoom_account_settings` table to correctly return data instead of an error. ([#60](https://github.com/turbot/steampipe-plugin-zoom/pull/60))
+
 _Dependencies_
 
 - Recompiled plugin with Go version `1.23.1`. ([#61](https://github.com/turbot/steampipe-plugin-zoom/pull/61))
