@@ -5,7 +5,7 @@ go 1.24
 toolchain go1.24.1
 
 require (
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.13.1
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.14.0
 	github.com/turbot/zoom-lib-golang v1.4.1
 )
 
