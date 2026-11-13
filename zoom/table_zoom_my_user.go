@@ -5,8 +5,8 @@ import (
 
 	"github.com/turbot/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v6/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin"
 )
 
 func tableZoomMyUser(ctx context.Context) *plugin.Table {

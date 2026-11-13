@@ -5,9 +5,9 @@ import (
 
 	"github.com/turbot/zoom-lib-golang"
 
-	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v6/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin/transform"
 )
 
 func tableZoomMeeting(ctx context.Context) *plugin.Table {
@@ -106,7 +106,7 @@ func getMeeting(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	getMeetingWithRetry := func(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 		return conn.GetMeeting(opts)
 	}
-	result, err := plugin.RetryHydrate(ctx, d, h, getMeetingWithRetry, &plugin.RetryConfig{ShouldRetryError: shouldRetryError})
+	result, err := plugin.RetryHydrate(ctx, d, h, getMeetingWithRetry, &plugin.RetryConfig{ShouldRetryErrorFunc: shouldRetryError})
 
 	if err != nil {
 		if e, ok := err.(*zoom.APIError); ok && e.Code == 3001 {
